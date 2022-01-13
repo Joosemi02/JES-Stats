@@ -1,7 +1,7 @@
-import nextcord as discord, requests, os
+import nextcord as discord, requests
 from nextcord.ext import commands
 from typing import Union
-from config import token, db, EMBED_COLOR
+from config import token, db, api_4, EMBED_COLOR
 
 linked = db["linked"]
 
@@ -25,7 +25,7 @@ async def get_embed(ctx: commands.Context, title=None, description=None, color=N
 
 
 async def is_server_online(ctx):
-    res = requests.get(os.environ["api_4"])
+    res = requests.get(api_4)
     active = res.json()["serverOnline"]
     if active:
         return True
@@ -72,6 +72,6 @@ async def on_ready():
 
 
 if __name__ == "__main__":
-    # bot.load_extension("cogs.commands")
+    bot.load_extension("cogs.commands")
 
     bot.run(token)
