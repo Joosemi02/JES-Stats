@@ -61,6 +61,7 @@ DiscordComponents(bot)
 @bot.event
 async def on_ready():
     print(f"{bot.user.name}: Bot loaded successfully. ID: {bot.user.id}")
+    await bot.change_presence(status=nextcord.Status.online, activity=nextcord.Activity(type=nextcord.ActivityType.watching, name="how I'm being developed.")
 
 
 if __name__ == "__main__":
