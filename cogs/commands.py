@@ -1,10 +1,12 @@
 import nextcord as discord, requests
 from nextcord.ext import commands
+from nextcord import slash_command
 from nextcord.enums import ButtonStyle
 from nextcord.interactions import Interaction
 
 from bot import find_linked, get_embed, is_server_online
 from config import api_1, api_2, api_3, api_4, api_5, api_6, api_8
+
 
 class PreviousButton(discord.ui.Button):
     def __init__(self, disabled):
@@ -20,10 +22,13 @@ class PreviousButton(discord.ui.Button):
         self.view.page -= 1
         c = 0
         for field in n_embed.fields:
-            if field.name=="Residents":
+            if field.name == "Residents":
                 await n_embed.remove_field(c)
-                c+=1
-                n_embed.add_field(name="Residents", value="\n".join(self.view.split_list[self.view.page - 1]))
+                c += 1
+                n_embed.add_field(
+                    name="Residents",
+                    value="\n".join(self.view.split_list[self.view.page - 1]),
+                )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.previous.disabled = self.view.page == 1
         self.view.next.disabled = self.view.page == self.view.total_pages
@@ -45,10 +50,13 @@ class NextButton(discord.ui.Button):
         self.view.page += 1
         c = 0
         for field in n_embed.fields:
-            if field.name=="Residents":
+            if field.name == "Residents":
                 await n_embed.remove_field(c)
-                c+=1
-                n_embed.add_field(name="Residents", value="\n".join(self.view.split_list[self.view.page - 1]))
+                c += 1
+                n_embed.add_field(
+                    name="Residents",
+                    value="\n".join(self.view.split_list[self.view.page - 1]),
+                )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.next.disabled = self.view.page == self.view.total_pages
         self.view.previous.disabled = self.view.page == 1
@@ -98,9 +106,6 @@ class Paginator(discord.ui.View):
         return await super().on_timeout()
 
 
-
-
-
 class Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -134,13 +139,12 @@ class Commands(commands.Cog):
     async def on_ready(self):
         print(f"{self.bot.user.name}: The commands extension was loaded successfully.")
 
-    @commands.command(
-        aliases=["town", "towns"],
-        description="Use this command to find info about a specific town.",
-        usage="Usage: `{prefixcommand}` `(online)` `(town)`.\nDo `{prefixcommand}` `town` to check the town's info.\nDo `{prefixcommand}` `online` `town` to see who's online in that town.\nLeave `town` empty to see your /linked town's info",
+    @slash_command(
+        name="town",
+        description="Use this command to find info about a specific town.///Usage: `{prefixcommand}` `(online)` `(town)`.\nDo `{prefixcommand}` `town` to check the town's info.\nDo `{prefixcommand}` `online` `town` to see who's online in that town.\nLeave `town` empty to see your /linked town's info",
     )
-    async def t(self, i: Interaction, arg=None, arg2=None):
-        if not arg and not await find_linked(i.message.author):
+    async def town(self, i: Interaction, town=None):
+        if not town and not await find_linked(i.message.author):
             return
         if await is_server_online(i) != True:
             return
@@ -152,10 +156,10 @@ class Commands(commands.Cog):
             )
         )
 
-        if arg.lower() == "online":
+        if town.lower() == "online":
             return await self.online()
 
-        if not arg and await (player := find_linked(i.message.author)):
+        if not town and await (player := find_linked(i.message.author)):
             resident = requests.get(f"{api_1}/{player}")
             arg = resident.json()["town"]
 
