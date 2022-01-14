@@ -47,7 +47,7 @@ async def find_linked(user: Union[discord.User, int, commands.Context]):
         return
 
 
-intents = discord.Intents.all()
+intents = None
 
 bot = commands.Bot(
     command_prefix="/",
