@@ -1,4 +1,4 @@
-import nextcord as discord
+import nextcord as discord, os
 from motor import motor_tornado
 
 token = os.environ["token"]
