@@ -6,7 +6,7 @@ from config import token, db, api_4, EMBED_COLOR
 linked = db["linked"]
 
 
-async def get_embed(ctx: commands.Context, title=None, description=None, color=None):
+async def get_embed(i: commands.Context, title=None, description=None, color=None):
     if not color:
         color = EMBED_COLOR
     kwargs = {"color": color}
@@ -15,23 +15,20 @@ async def get_embed(ctx: commands.Context, title=None, description=None, color=N
     if description:
         kwargs["description"] = description
     embed = discord.Embed(**kwargs)
-    embed.set_author(
-        name=ctx.message.author.display_name, icon_url=ctx.author.avatar.url
-    )
     embed.set_thumbnail(
         url="https://cdn.discordapp.com/icons/911944157625483264/359028bbc374ee43f60e25e35c39874b.png?size=1024"
     )
     return embed
 
 
-async def is_server_online(ctx):
+async def is_server_online(i):
     res = requests.get(api_4)
     active = res.json()["serverOnline"]
     if active:
         return True
-    return await ctx.send(
+    return await i.send(
         embed=await get_embed(
-            ctx, ":red_circle: The server is offline, can't find that info"
+            i, ":red_circle: The server is offline, can't find that info"
         )
     )
 

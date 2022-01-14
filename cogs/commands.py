@@ -1,88 +1,109 @@
-import discord, asyncio, requests
-from discord.ext import commands
-from discord_components import Interaction, Button, ButtonStyle
+import nextcord as discord, requests
+from nextcord.ext import commands
+from nextcord.enums import ButtonStyle
+from nextcord.interactions import Interaction
+
 from bot import find_linked, get_embed, is_server_online
 from config import api_1, api_2, api_3, api_4, api_5, api_6, api_8
 
+class PreviousButton(discord.ui.Button):
+    def __init__(self, disabled):
+        super().__init__(
+            style=ButtonStyle.blurple,
+            custom_id="paginator_previous",
+            emoji="⏮️",
+            disabled=disabled,
+        )
 
-class Temp:
-    def __init__(self, ctx: commands.Context, reslist, embed=None, arg2=None):
-        self.ctx = ctx
-        self.bot: commands.Bot = ctx.bot
-        self.list = None
-        self.msg: discord.Message = None
+    async def callback(self, i: Interaction):
+        n_embed: discord.Embed = self.view.message.embeds[0]
+        self.view.page -= 1
+        c = 0
+        for field in n_embed.fields:
+            if field.name=="Residents":
+                await n_embed.remove_field(c)
+                c+=1
+                n_embed.add_field(name="Residents", value="\n".join(self.view.split_list[self.view.page - 1]))
+        self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
+        self.view.previous.disabled = self.view.page == 1
+        self.view.next.disabled = self.view.page == self.view.total_pages
+        await i.response.edit_message(embed=n_embed, view=self.view)
+        return await super().callback(i)
+
+
+class NextButton(discord.ui.Button):
+    def __init__(self, disabled):
+        super().__init__(
+            style=ButtonStyle.blurple,
+            custom_id="paginator_next",
+            emoji="⏩",
+            disabled=disabled,
+        )
+
+    async def callback(self, i: Interaction):
+        n_embed: discord.Embed = self.view.message.embeds[0]
+        self.view.page += 1
+        c = 0
+        for field in n_embed.fields:
+            if field.name=="Residents":
+                await n_embed.remove_field(c)
+                c+=1
+                n_embed.add_field(name="Residents", value="\n".join(self.view.split_list[self.view.page - 1]))
+        self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
+        self.view.next.disabled = self.view.page == self.view.total_pages
+        self.view.previous.disabled = self.view.page == 1
+        await i.response.edit_message(embed=n_embed, view=self.view)
+        return await super().callback(i)
+
+
+class PageCountButton(discord.ui.Button):
+    def __init__(self, label):
+        super().__init__(
+            style=ButtonStyle.blurple,
+            custom_id="paginator_count",
+            disabled=True,
+            label=label,
+        )
+
+
+class Paginator(discord.ui.View):
+    def __init__(self, bot, interaction, li, timeout=30):
+        self.bot: commands.Bot = bot
+        self.interaction: commands.Context = interaction
+        self.split_list = [li[i : i + 10] for i in range(0, len(li), 10)]
         self.page = 1
-        self.reslist = reslist
-        self.arg2 = arg2
-        if embed:
-            res_per_page = 10
-            self.split_list = [
-                reslist[i : i + res_per_page]
-                for i in range(0, len(reslist), res_per_page)
-            ]
-            self.total_pages = len(self.split_list)
+        self.total_pages = len(self.split_list)
+        p_disabled = self.page == 1
+        n_disabled = self.page == self.total_pages
+        super().__init__(timeout=timeout)
+        self.previous = PreviousButton(p_disabled)
+        self.add_item(self.previous)
+        self.count = PageCountButton(f"{self.page}/{self.total_pages}")
+        self.add_item(self.count)
+        self.next = NextButton(n_disabled)
+        self.add_item(self.next)
 
-    def get_buttons(self):
-        components = [[]]
+    async def interaction_check(self, i: Interaction) -> bool:
+        i.user.id == self.interaction.user.id
+        return await super().interaction_check(i)
 
-        p_disbled = self.page == 1
-        components[0].append(
-            Button(
-                emoji="⏪",
-                style=ButtonStyle.blue,
-                custom_id="previous",
-                disabled=p_disbled,
-            )
-        )
-        components[0].append(
-            Button(
-                label=f"{self.page}/{self.total_pages}",
-                style=ButtonStyle.blue,
-                custom_id="page_count",
-                disabled=True,
-            )
-        )
-        n_disbled = self.page == self.total_pages
-        components[0].append(
-            Button(
-                emoji="⏭️", style=ButtonStyle.blue, custom_id="next", disabled=n_disbled
-            )
-        )
+    async def on_timeout(self) -> None:
+        if not hasattr(self, "message"):
+            return
+        n_embed = self.message.embeds[0]
+        n_embed.set_footer(text="The buttons to switch pages have timed out.")
+        for child in self.children:
+            child.disabled = True
+        await self.message.edit(embed=n_embed, view=self)
+        return await super().on_timeout()
 
-        return components
 
-    async def wait_for_buttons(self):
-        def check(i: Interaction):
-            return i.author == self.ctx.author and i.message.id == self.msg.id
 
-        try:
-            interaction: Interaction = await self.bot.wait_for(
-                "button_click", timeout=80, check=check
-            )
-        except asyncio.TimeoutError:
-            return await self.msg.edit(components=[])
-        if interaction.custom_id == "next":
-            self.page += 1
-        else:
-            self.page -= 1
 
-        await self.switch_page(interaction)
 
-    async def edit_embed(self):
-        embed: discord.Embed = self.msg.embeds[0]
-        embed.remove_field(4)
-        embed.add_field(
-            name="Residents: ",
-            value="\n".join(self.split_list[self.page - 1]),
-            inline=False,
-        )
-        return embed
-
-    async def switch_page(self, interaction: Interaction):
-        await interaction.edit_origin(
-            embed=await self.edit_embed(), components=self.get_buttons()
-        )
-        await self.wait_for_buttons()
+class Commands(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
     async def online(self):
         if not self.arg2:
@@ -109,11 +130,6 @@ class Temp:
         await self.reslist.delete()
         await self.ctx.send(embed=embed)
 
-
-class Commands(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.bot.user.name}: The commands extension was loaded successfully.")
@@ -123,39 +139,38 @@ class Commands(commands.Cog):
         description="Use this command to find info about a specific town.",
         usage="Usage: `{prefixcommand}` `(online)` `(town)`.\nDo `{prefixcommand}` `town` to check the town's info.\nDo `{prefixcommand}` `online` `town` to see who's online in that town.\nLeave `town` empty to see your /linked town's info",
     )
-    async def t(self, ctx: commands.Context, arg=None, arg2=None):
-        if not arg and not await find_linked(ctx.message.author):
-            return await ctx.send_help(ctx.command)
-        if await is_server_online(ctx) != True:
+    async def t(self, i: Interaction, arg=None, arg2=None):
+        if not arg and not await find_linked(i.message.author):
+            return
+        if await is_server_online(i) != True:
             return
 
-        wait_msg = await ctx.reply(
+        wait_msg = await i.send(
             embed=await get_embed(
-                ctx=ctx,
+                i=i,
                 description="<a:happy_red:912452454669508618> Fetching town data ...",
             )
         )
 
         if arg.lower() == "online":
-            temp = Temp(ctx, wait_msg, arg2=arg2)
-            return await temp.online()
+            return await self.online()
 
-        if not arg and await (player := find_linked(ctx.message.author)):
+        if not arg and await (player := find_linked(i.message.author)):
             resident = requests.get(f"{api_1}/{player}")
             arg = resident.json()["town"]
 
         res = requests.get(f"{api_1}/{arg}")
         if res.json() == "That town does not exist!":
             await wait_msg.delete()
-            return await ctx.reply(
+            return await i.send(
                 embed=await get_embed(
-                    ctx,
+                    i,
                     description="<a:crya:912762373591420989> This town doesn't exist...",
                     color=discord.Color.red(),
                 )
             )
 
-        embed = await get_embed(ctx, f"Town: {res.json()['name']}")
+        embed = await get_embed(i, f"Town: {res.json()['name']}")
         embed.add_field(name="Mayor", value=res.json()["mayor"], inline=True)
         embed.add_field(name="Nation", value=res.json()["nation"], inline=True)
         embed.add_field(
@@ -170,15 +185,13 @@ class Commands(commands.Cog):
         )
 
         reslist: list = res.json()["residents"]
-        temp = Temp(ctx, reslist, embed)
+        view = Paginator(self.bot, i, reslist)
 
         embed.add_field(
-            name="Residents: ", value="\n".join(temp.split_list[0]), inline=False
+            name="Residents: ", value="\n".join(view.split_list[0]), inline=False
         )
         await wait_msg.delete()
-        temp.msg = await ctx.send(embed=embed, components=temp.get_buttons())
-
-        await temp.wait_for_buttons()
+        view.message = await i.send(embed=embed, view=view)
 
     @commands.command(
         aliases=["resident", "residents"],
