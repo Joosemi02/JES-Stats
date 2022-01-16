@@ -21,7 +21,7 @@ class PreviousButton(discord.ui.Button):
         self.view.page -= 1
         n_embed.remove_field(3)
         n_embed.add_field(
-            name=f"[{self.num}] Residents:",
+            name=f"[{self.view.num}] Residents:",
             value="\n".join(self.view.split_list[self.view.page - 1]),
         )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
@@ -45,7 +45,7 @@ class NextButton(discord.ui.Button):
         self.view.page += 1
         n_embed.remove_field(3)
         n_embed.add_field(
-            name=f"[{self.num}] Residents:",
+            name=f"[{self.view.num}] Residents:",
             value="\n".join(self.view.split_list[self.view.page - 1]),
         )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
