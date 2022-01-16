@@ -183,7 +183,7 @@ class Commands(commands.Cog):
 
     @slash_command(
         name="resident",
-        description="Use this commands to get a player's info. Make sure to type the '_' if it's a bedrock player.",
+        description="Use this command to get a player's info. Make sure to type the '_' if it's a bedrock player.",
     )
     async def resident(self, i: Interaction, resident=None):
         if not resident:
@@ -197,12 +197,13 @@ class Commands(commands.Cog):
 
         await i.response.defer()
 
+        res = requests.get(f"{api_2}/{resident}")
         embed = await get_embed(i, title=f"Resident: {resident.json()['name']}")
         embed.add_field(
-            name="Nation: ", value=str(resident.json()["nation"]), inline=False
+            name="Nation: ", value=str(res.json()["nation"]), inline=False
         )
-        embed.add_field(name="Town: ", value=str(resident.json()["town"]), inline=False)
-        embed.add_field(name="Rank: ", value=str(resident.json()["rank"]), inline=False)
+        embed.add_field(name="Town: ", value=str(res.json()["town"]), inline=False)
+        embed.add_field(name="Rank: ", value=str(res.json()["rank"]), inline=False)
 
         await i.followup.send(embed=embed)
 
