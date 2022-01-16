@@ -1,7 +1,7 @@
 import nextcord as discord, os
 from motor import motor_tornado
 
-token = os.environ["token"]
+token = ""
 
 client = motor_tornado.MotorClient(os.environ["db_token"])
 db = client["jesbot"]

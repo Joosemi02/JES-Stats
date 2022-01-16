@@ -1,7 +1,6 @@
 import nextcord as discord, requests
 from nextcord.ext import commands
 from nextcord import Interaction
-from typing import Union
 from config import token, db, api_4, EMBED_COLOR
 
 linked = db["linked"]
