@@ -22,7 +22,7 @@ class PreviousButton(discord.ui.Button):
         c = 0
         for field in n_embed.fields:
             if field.name.endswith("Residents:"):
-                await n_embed.remove_field(c)
+                n_embed.remove_field(c)
                 c += 1
                 n_embed.add_field(
                     name=f"[{self.view.num}] Residents:",
@@ -50,7 +50,7 @@ class NextButton(discord.ui.Button):
         c = 0
         for field in n_embed.fields:
             if field.name.endswith("Residents:"):
-                await n_embed.remove_field(c)
+                n_embed.remove_field(c)
                 c += 1
                 n_embed.add_field(
                     name=f"[{self.view.num}] Residents:",
@@ -177,7 +177,7 @@ class Commands(commands.Cog):
         reslist: list = res.json()["residents"]
         view = Paginator(self.bot, i, reslist)
         embed.add_field(
-            name="Residents: ", value="\n".join(view.split_list[0]), inline=False
+            name=f"[{len(reslist)}] Residents: ", value="\n".join(view.split_list[0]), inline=False
         )
         view.message = await i.followup.send(embed=embed, view=view)
 
