@@ -3,7 +3,6 @@ from nextcord.ext import commands
 from nextcord import Interaction
 from config import token, db, EMBED_COLOR
 
-linked = db["linked"]
 config = db["config"]
 
 
@@ -24,7 +23,7 @@ async def get_embed(i: Interaction, title=None, description=None, color=None):
 
 async def is_server_online(i):
     online = await config.find_one({"_id": "online"})
-    return online["chrased"] != True
+    return online["crashed"] != True
 
 
 intents = None
