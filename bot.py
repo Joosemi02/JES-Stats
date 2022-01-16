@@ -1,12 +1,13 @@
 import nextcord as discord, requests
 from nextcord.ext import commands
+from nextcord import Interaction
 from typing import Union
 from config import token, db, api_4, EMBED_COLOR
 
 linked = db["linked"]
 
 
-async def get_embed(i: commands.Context, title=None, description=None, color=None):
+async def get_embed(i: Interaction, title=None, description=None, color=None):
     if not color:
         color = EMBED_COLOR
     kwargs = {"color": color}
@@ -28,23 +29,11 @@ async def is_server_online(i):
         return True
     return await i.send(
         embed=await get_embed(
-            i, ":red_circle: The server is offline, can't find that info"
+            i,
+            ":red_circle: The server is offline, can't find that info",
+            discord.Color.red(),
         )
     )
-
-
-async def find_linked(user: Union[discord.User, int, commands.Context]):
-    if isinstance(user, commands.Context):
-        id_ = user.message.author.id
-    elif isinstance(user, (discord.User, discord.Member)):
-        id_ = user.id
-    else:
-        id_ = user
-    players = await linked.find_one({"_id": "players"})
-    if id_ in players:
-        return players["ign"]
-    else:
-        return
 
 
 intents = None

@@ -1,9 +1,10 @@
 import nextcord as discord, requests
 from nextcord.ext import commands
-from nextcord import slash_command
 from nextcord.enums import ButtonStyle
 from nextcord.interactions import Interaction
+from nextcord import slash_command
 
+from help_ import send_help
 from bot import find_linked, get_embed, is_server_online
 from config import api_1, api_2, api_3, api_4, api_5, api_6, api_8
 
@@ -110,7 +111,7 @@ class Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def online(self):
+    """async def online(self):
         if not self.arg2:
             if not await (player := find_linked(self.ctx.message.author)):
                 return await self.ctx.send_help(self.ctx.command)
@@ -133,7 +134,7 @@ class Commands(commands.Cog):
                 name="Names: ", value="```" + "\n".join(li) + "```", inline=False
             )
         await self.reslist.delete()
-        await self.ctx.send(embed=embed)
+        await self.ctx.send(embed=embed)"""
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -141,31 +142,12 @@ class Commands(commands.Cog):
 
     @slash_command(
         name="town",
-        description="Use this command to find info about a specific town.///Usage: `{prefixcommand}` `(online)` `(town)`.\nDo `{prefixcommand}` `town` to check the town's info.\nDo `{prefixcommand}` `online` `town` to see who's online in that town.\nLeave `town` empty to see your /linked town's info",
+        description="Do `/town` `(town name)` to check the town's info.\nLeave `town` empty to see your /linked town's info",
+        guild_ids=[911944157625483264]
     )
-    async def town(self, i: Interaction, town=None):
-        if not town and not await find_linked(i.message.author):
-            return
-        if await is_server_online(i) != True:
-            return
-
-        wait_msg = await i.send(
-            embed=await get_embed(
-                i=i,
-                description="<a:happy_red:912452454669508618> Fetching town data ...",
-            )
-        )
-
-        if town.lower() == "online":
-            return await self.online()
-
-        if not town and await (player := find_linked(i.message.author)):
-            resident = requests.get(f"{api_1}/{player}")
-            arg = resident.json()["town"]
-
-        res = requests.get(f"{api_1}/{arg}")
+    async def town(self, i: Interaction, town):
+        res = requests.get(f"{api_1}/{town}")
         if res.json() == "That town does not exist!":
-            await wait_msg.delete()
             return await i.send(
                 embed=await get_embed(
                     i,
@@ -194,7 +176,6 @@ class Commands(commands.Cog):
         embed.add_field(
             name="Residents: ", value="\n".join(view.split_list[0]), inline=False
         )
-        await wait_msg.delete()
         view.message = await i.send(embed=embed, view=view)
 
     @commands.command(
