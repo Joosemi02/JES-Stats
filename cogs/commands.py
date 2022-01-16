@@ -140,8 +140,8 @@ class Commands(commands.Cog):
 
     @slash_command(
         name="town",
-        description="Do `/town` `(town name)` to check the town's info.\nLeave `town` empty to see your /linked town's info",
-        guild_ids=[911944157625483264]
+        description="Do `/town` `(town name)` to check the town's info. Leave `town` empty to see your /linked town's info",
+        guild_ids=[911944157625483264],
     )
     async def town(self, i: Interaction, town):
         res = requests.get(f"{api_1}/{town}")
@@ -181,9 +181,7 @@ class Commands(commands.Cog):
         usage="Usage: `{prefixcommand}` `(username)`.\nLeave `username` empty to view your /linked resident info.",
         description="Use this commands to get a player's info. Make sure to type the '_' if it's a bedrock player.",
     )
-    async def res(self, ctx: commands.Context, arg=None):
-        if not arg and not await find_linked(ctx.message.author):
-            return await ctx.send_help(ctx.command)
+    async def res(self, ctx: commands.Context, res=None):
         if await is_server_online(ctx) != True:
             return
 
@@ -193,10 +191,6 @@ class Commands(commands.Cog):
                 description="<a:happy_red:912452454669508618> Fetching resident data ...",
             )
         )
-
-        if not arg and await (player := find_linked(ctx.message.author)):
-            arg = player
-        res = requests.get(f"{api_3}/{arg}")
 
         embed = await get_embed(ctx, title=f"Resident: {res.json()['name']}")
         embed.add_field(name="Nation: ", value=str(res.json()["nation"]), inline=False)
@@ -211,8 +205,6 @@ class Commands(commands.Cog):
         description="Use this command to find info about a specific nation.",
     )
     async def n(self, ctx: commands.Context, arg=None):
-        if not arg and not await find_linked(ctx.message.author):
-            return await ctx.send_help(ctx.command)
         if await is_server_online(ctx) != True:
             return
 
@@ -223,8 +215,6 @@ class Commands(commands.Cog):
             )
         )
 
-        if not arg and await (player := find_linked(ctx.message.author)):
-            arg = player
         res = requests.get(f"{api_2}/{arg}")
         embed = await get_embed(ctx, title=f"Nation: {res.json()['name']}")
         embed.add_field(name="King: ", value=res.json()["king"], inline=True)
@@ -362,8 +352,6 @@ class Commands(commands.Cog):
         description="Use this command to view who is online in a town. Leave `town` empty to view your /linked town's info.",
     )
     async def tonline(self, ctx: commands.Context, arg=None):
-        if not arg and not await find_linked(ctx.message.author):
-            return await ctx.send_help(ctx.command)
         if await is_server_online(ctx) != True:
             return
 
@@ -374,9 +362,6 @@ class Commands(commands.Cog):
             )
         )
 
-        if not arg and await (player := find_linked(ctx.message.author)):
-            resident = requests.get(f"{api_1}/{player}")
-            arg = resident.json()["town"]
         res = requests.get(api_5)
         embed = await get_embed(ctx, title=f"Online Players in {arg}")
         li = [
