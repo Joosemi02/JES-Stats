@@ -3,9 +3,7 @@ from nextcord.ext import commands
 from nextcord.enums import ButtonStyle
 from nextcord.interactions import Interaction
 from nextcord import slash_command
-
-from help_ import send_help
-from bot import find_linked, get_embed, is_server_online
+from bot import get_embed, is_server_online
 from config import api_1, api_2, api_3, api_4, api_5, api_6, api_8
 
 
