@@ -140,7 +140,7 @@ class Commands(commands.Cog):
 
     @slash_command(
         name="town",
-        description="Do `/town` `(town name)` to check the town's info. Leave `town` empty to see your /linked town's info",
+        description="Do `/town` `(town name)` to check the town's info.",
         guild_ids=[911944157625483264],
     )
     async def town(self, i: Interaction, town):
