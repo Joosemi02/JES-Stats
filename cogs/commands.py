@@ -140,10 +140,12 @@ class Commands(commands.Cog):
 
     @slash_command(
         name="town",
-        description="Do `/town` `(town name)` to check the town's info.",
+        description="Use this command to view a town's info.",
         guild_ids=[911944157625483264],
     )
-    async def town(self, i: Interaction, town):
+    async def town(self, i: Interaction, town=None):
+        if not town:
+            return await i.send("Please enter a town name in the `town` field.", ephemeral=True)
         res = requests.get(f"{api_1}/{town}")
         if res.json() == "That town does not exist!":
             return await i.send(
