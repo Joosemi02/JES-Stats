@@ -19,10 +19,11 @@ class PreviousButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page -= 1
-        for field in n_embed.fields:
-            if field.name.endswith("Residents:"):
-                field.value = "\n".join(self.view.split_list[self.view.page - 1])
-                break
+        n_embed.remove_field(4)
+        n_embed.add_field(
+            name=f"[{self.num}] Residents:",
+            value="\n".join(self.view.split_list[self.view.page - 1]),
+        )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.previous.disabled = self.view.page == 1
         self.view.next.disabled = self.view.page == self.view.total_pages
@@ -42,10 +43,11 @@ class NextButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page += 1
-        for field in n_embed.fields:
-            if field.name.endswith("Residents:"):
-                field.value = "\n".join(self.view.split_list[self.view.page - 1])
-                break
+        n_embed.remove_field(4)
+        n_embed.add_field(
+            name=f"[{self.num}] Residents:",
+            value="\n".join(self.view.split_list[self.view.page - 1]),
+        )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.next.disabled = self.view.page == self.view.total_pages
         self.view.previous.disabled = self.view.page == 1
