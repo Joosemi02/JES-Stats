@@ -145,7 +145,9 @@ class Commands(commands.Cog):
     )
     async def town(self, i: Interaction, town=None):
         if not town:
-            return await i.send("Please enter a town name in the `town` field.", ephemeral=True)
+            return await i.send(
+                "Please enter a town name in the `town` field.", ephemeral=True
+            )
         res = requests.get(f"{api_1}/{town}")
         if res.json() == "That town does not exist!":
             return await i.send(
@@ -156,6 +158,7 @@ class Commands(commands.Cog):
                 )
             )
 
+        await i.response.defer()
         embed = await get_embed(i, f"Town: {res.json()['name']}")
         embed.add_field(name="Mayor", value=res.json()["mayor"], inline=True)
         embed.add_field(name="Nation", value=res.json()["nation"], inline=True)
@@ -172,11 +175,10 @@ class Commands(commands.Cog):
 
         reslist: list = res.json()["residents"]
         view = Paginator(self.bot, i, reslist)
-
         embed.add_field(
             name="Residents: ", value="\n".join(view.split_list[0]), inline=False
         )
-        view.message = await i.send(embed=embed, view=view)
+        view.message = await i.followup.send(embed=embed, view=view)
 
     @commands.command(
         aliases=["resident", "residents"],
