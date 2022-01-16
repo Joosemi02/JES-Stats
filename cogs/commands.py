@@ -134,13 +134,19 @@ class Commands(commands.Cog):
     @slash_command(
         name="town",
         description="Use this command to view a town's info.",
-        guild_ids=[911944157625483264],
     )
     async def town(self, i: Interaction, town=None):
         if not town:
             return await i.send(
                 "Please enter a town name in the `town` field.", ephemeral=True
             )
+
+        if is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
+            )
+            return await i.send(embed=embed)
+
         res = requests.get(f"{api_1}/{town}")
         if res.json() == "That town does not exist!":
             return await i.send(
@@ -165,7 +171,6 @@ class Commands(commands.Cog):
             value=f'{res.json()["area"]}/{len(res.json()["residents"] * 8)}',
             inline=False,
         )
-
         reslist: list = res.json()["residents"]
         view = Paginator(self.bot, i, reslist)
         embed.add_field(
@@ -173,30 +178,33 @@ class Commands(commands.Cog):
             value="\n".join(view.split_list[0]),
             inline=False,
         )
+
         view.message = await i.followup.send(embed=embed, view=view)
 
-    @commands.command(
-        aliases=["resident", "residents"],
-        usage="Usage: `{prefixcommand}` `(username)`.\nLeave `username` empty to view your /linked resident info.",
+    @slash_command(
+        name="resident",
         description="Use this commands to get a player's info. Make sure to type the '_' if it's a bedrock player.",
     )
-    async def res(self, ctx: commands.Context, res=None):
-        if await is_server_online(ctx) != True:
+    async def resident(self, i: Interaction, resident=None):
+        if not resident:
+            return await i.send(
+                "Please enter a resident username in the `resident` field.",
+                ephemeral=True,
+            )
+
+        if await is_server_online(i) != True:
             return
 
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching resident data ...",
-            )
-        )
+        await i.response.defer()
 
-        embed = await get_embed(ctx, title=f"Resident: {res.json()['name']}")
-        embed.add_field(name="Nation: ", value=str(res.json()["nation"]), inline=False)
-        embed.add_field(name="Town: ", value=str(res.json()["town"]), inline=False)
-        embed.add_field(name="Rank: ", value=str(res.json()["rank"]), inline=False)
-        await wait_msg.delete()
-        await ctx.send(embed=embed)
+        embed = await get_embed(i, title=f"Resident: {resident.json()['name']}")
+        embed.add_field(
+            name="Nation: ", value=str(resident.json()["nation"]), inline=False
+        )
+        embed.add_field(name="Town: ", value=str(resident.json()["town"]), inline=False)
+        embed.add_field(name="Rank: ", value=str(resident.json()["rank"]), inline=False)
+
+        await i.followup.send(embed=embed)
 
     @commands.command(
         aliases=["nation", "nations"],
