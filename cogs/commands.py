@@ -21,11 +21,11 @@ class PreviousButton(discord.ui.Button):
         self.view.page -= 1
         c = 0
         for field in n_embed.fields:
-            if field.name == "Residents":
+            if field.name.endswith("Residents:"):
                 await n_embed.remove_field(c)
                 c += 1
                 n_embed.add_field(
-                    name="Residents",
+                    name=f"[{self.view.num}] Residents:",
                     value="\n".join(self.view.split_list[self.view.page - 1]),
                 )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
@@ -49,11 +49,11 @@ class NextButton(discord.ui.Button):
         self.view.page += 1
         c = 0
         for field in n_embed.fields:
-            if field.name == "Residents":
+            if field.name.endswith("Residents:"):
                 await n_embed.remove_field(c)
                 c += 1
                 n_embed.add_field(
-                    name="Residents",
+                    name=f"[{self.view.num}] Residents:",
                     value="\n".join(self.view.split_list[self.view.page - 1]),
                 )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
@@ -77,6 +77,7 @@ class Paginator(discord.ui.View):
     def __init__(self, bot, interaction, li, timeout=30):
         self.bot: commands.Bot = bot
         self.interaction: commands.Context = interaction
+        self.num = len(li)
         self.split_list = [li[i : i + 10] for i in range(0, len(li), 10)]
         self.page = 1
         self.total_pages = len(self.split_list)
