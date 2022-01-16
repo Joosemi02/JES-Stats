@@ -19,15 +19,10 @@ class PreviousButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page -= 1
-        c = 0
         for field in n_embed.fields:
             if field.name.endswith("Residents:"):
-                n_embed.remove_field(c)
-                c += 1
-                n_embed.add_field(
-                    name=f"[{self.view.num}] Residents:",
-                    value="\n".join(self.view.split_list[self.view.page - 1]),
-                )
+                field.value = "\n".join(self.view.split_list[self.view.page - 1])
+                break
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.previous.disabled = self.view.page == 1
         self.view.next.disabled = self.view.page == self.view.total_pages
@@ -47,15 +42,10 @@ class NextButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page += 1
-        c = 0
         for field in n_embed.fields:
             if field.name.endswith("Residents:"):
-                n_embed.remove_field(c)
-                c += 1
-                n_embed.add_field(
-                    name=f"[{self.view.num}] Residents:",
-                    value="\n".join(self.view.split_list[self.view.page - 1]),
-                )
+                field.value = "\n".join(self.view.split_list[self.view.page - 1])
+                break
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.next.disabled = self.view.page == self.view.total_pages
         self.view.previous.disabled = self.view.page == 1
@@ -177,7 +167,9 @@ class Commands(commands.Cog):
         reslist: list = res.json()["residents"]
         view = Paginator(self.bot, i, reslist)
         embed.add_field(
-            name=f"[{len(reslist)}] Residents: ", value="\n".join(view.split_list[0]), inline=False
+            name=f"[{len(reslist)}] Residents: ",
+            value="\n".join(view.split_list[0]),
+            inline=False,
         )
         view.message = await i.followup.send(embed=embed, view=view)
 
