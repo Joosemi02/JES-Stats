@@ -19,6 +19,7 @@ class PreviousButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page -= 1
+        n_embed.remove_field(3)
         n_embed.add_field(
             name=f"[{self.num}] Residents:",
             value="\n".join(self.view.split_list[self.view.page - 1]),
@@ -42,6 +43,7 @@ class NextButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page += 1
+        n_embed.remove_field(3)
         n_embed.add_field(
             name=f"[{self.num}] Residents:",
             value="\n".join(self.view.split_list[self.view.page - 1]),
