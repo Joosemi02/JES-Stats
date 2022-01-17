@@ -229,12 +229,12 @@ class Commands(commands.Cog):
         embed = await get_embed(i, title=f"Nation: {res.json()['name']}")
         embed.add_field(name="King: ", value=res.json()["king"], inline=True)
         embed.add_field(name="Capital: ", value=res.json()["capitalName"], inline=True)
-        embed.add_field(name="Claims: ", value=str(res.json()["area"]), inline=False)
+        embed.add_field(name="Claims: ", value=str(res.json()["area"]), inline=True)
         embed.add_field(
-            name="Towns: ", value=str(len(res.json()["towns"])), inline=False
+            name="Towns: ", value=str(len(res.json()["towns"])), inline=True
         )
         embed.add_field(
-            name="Population: ", value=str(len(res.json()["residents"])), inline=False
+            name="Population: ", value=str(len(res.json()["residents"])), inline=True
         )
 
         await i.followup.send(embed=embed)
@@ -242,7 +242,7 @@ class Commands(commands.Cog):
     @slash_command(
         name="townless",
         description="Use this command to get the name of online players that aren't in a town.",
-        guild_ids=[911944157625483264]
+        guild_ids=[911944157625483264],
     )
     async def townless(self, i: Interaction):
         if await is_server_online(i) == False:
@@ -270,19 +270,12 @@ class Commands(commands.Cog):
         await i.followup.send(embed=embed)
 
     @commands.command(
-        aliases=["server", "jestatus"],
-        usage="Usage: `{prefixcommand}`.",
-        description="Use this command to get info about the server's network",
+        name="status",
+        description="Use this command to get info about the server's network.",
     )
-    async def status(self, ctx):
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching network status ...",
-            )
-        )
+    async def status(self, i: Interaction):
         res = requests.get(api_4)
-        embed = await get_embed(ctx, title="Network Status")
+        embed = await get_embed(i, title="Network Status")
         embed.add_field(
             name="Towny: ", value=f'```{res.json()["towny"]}/110```', inline=False
         )
@@ -298,8 +291,8 @@ class Commands(commands.Cog):
             embed.add_field(name="Server: ", value=":green_circle:", inline=False)
         else:
             embed.add_field(name="Server: ", value=":red_circle:", inline=False)
-        await wait_msg.delete()
-        await ctx.send(embed=embed)
+            
+        await i.send(embed=embed)
 
     @commands.command(
         aliases=["onlineplayer"],
