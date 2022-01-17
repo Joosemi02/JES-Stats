@@ -4,7 +4,7 @@ from nextcord.enums import ButtonStyle
 from nextcord.interactions import Interaction
 from nextcord import slash_command
 from bot import get_embed, is_server_online
-from config import api_1, api_2, api_3, api_4, api_5, api_6, api_8
+from config import api_1, api_2, api_3, api_4, api_5, api_6
 
 
 class PreviousButton(discord.ui.Button):
@@ -122,7 +122,6 @@ class Commands(commands.Cog):
     @slash_command(
         name="online",
         description="Use this command to get a list of online players.",
-        guild_ids=[911944157625483264],
     )
     async def online(self, i: Interaction):
         if await is_server_online(i) == False:
