@@ -211,7 +211,6 @@ class Commands(commands.Cog):
     @slash_command(
         name="nation",
         description="Use this command to find info about a specific nation.",
-        guild_ids=[911944157625483264],
     )
     async def nation(self, i: Interaction, nation=None):
         if not nation:
@@ -227,14 +226,14 @@ class Commands(commands.Cog):
 
         res = requests.get(f"{api_2}/{nation}")
         embed = await get_embed(i, title=f"Nation: {res.json()['name']}")
-        embed.add_field(name="Capital: ", value=res.json()["capitalName"], inline=False)
+        embed.add_field(name="Capital: ", value=res.json()["capitalName"], inline=True)
         embed.add_field(name="King: ", value=res.json()["king"], inline=True)
+        embed.add_field(
+            name="Population: ", value=str(len(res.json()["residents"])), inline=True
+        )
         embed.add_field(name="Claims: ", value=str(res.json()["area"]), inline=True)
         embed.add_field(
             name="Towns: ", value=str(len(res.json()["towns"])), inline=True
-        )
-        embed.add_field(
-            name="Population: ", value=str(len(res.json()["residents"])), inline=True
         )
 
         await i.followup.send(embed=embed)
@@ -271,7 +270,6 @@ class Commands(commands.Cog):
     @slash_command(
         name="status",
         description="Use this command to get info about the server's network.",
-        guild_ids=[911944157625483264],
     )
     async def status(self, i: Interaction):
         await i.response.defer()
@@ -297,7 +295,6 @@ class Commands(commands.Cog):
     @slash_command(
         name="online",
         description="Use this command to get a list of online players.",
-        guild_ids=[911944157625483264],
     )
     async def online(self, i: Interaction):
         if await is_server_online(i) == False:
@@ -320,7 +317,6 @@ class Commands(commands.Cog):
     @slash_command(
         name="onlinemayors",
         description="Use this command to get a list of the mayors that are online in the server.",
-        guild_ids=[911944157625483264],
     )
     async def onlinemayors(self, i: Interaction):
         if await is_server_online(i) == False:
@@ -347,7 +343,6 @@ class Commands(commands.Cog):
     @slash_command(
         name="townonline",
         description="Use this command to view who is online in a town.",
-        guild_ids=[911944157625483264],
     )
     async def townonline(self, i: Interaction, town=None):
         if await is_server_online(i) == False:
@@ -375,8 +370,7 @@ class Commands(commands.Cog):
 
     @slash_command(
         name="ruins",
-        description="Use this command to get the names",
-        guild_ids=[911944157625483264],
+        description="Use this command to get the names.",
     )
     async def ruinedtowns(self, i: Interaction):
         if await is_server_online(i) == False:
