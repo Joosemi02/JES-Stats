@@ -19,13 +19,13 @@ class PreviousButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page -= 1
-        try:
+        if self.view.type == "town":
             n_embed.remove_field(4)
             n_embed.add_field(
                 name=f"[{self.view.num}] Residents:",
                 value="\n".join(self.view.split_list[self.view.page - 1]),
             )
-        except:
+        if self.view.type == "online":
             n_embed.remove_field(0)
             n_embed.add_field(
                 name="Names:", value="\n".join(self.view.split_list[self.view.page - 1])
@@ -49,13 +49,13 @@ class NextButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page += 1
-        try:
+        if self.view.type == "town":
             n_embed.remove_field(4)
             n_embed.add_field(
                 name=f"[{self.view.num}] Residents:",
                 value="\n".join(self.view.split_list[self.view.page - 1]),
             )
-        except:
+        if self.view.type == "online":
             n_embed.remove_field(0)
             n_embed.add_field(
                 name="Names:", value="\n".join(self.view.split_list[self.view.page - 1])
@@ -78,9 +78,10 @@ class PageCountButton(discord.ui.Button):
 
 
 class Paginator(discord.ui.View):
-    def __init__(self, bot, interaction, li, timeout=30):
+    def __init__(self, bot, interaction, li, type, timeout=30):
         self.bot: commands.Bot = bot
         self.interaction: commands.Context = interaction
+        self.type = type
         self.num = len(li)
         self.split_list = [li[i : i + 10] for i in range(0, len(li), 10)]
         self.page = 1
@@ -135,7 +136,7 @@ class Commands(commands.Cog):
         res = requests.get(api_5)
         li = [res.json()[i]["name"] for i in range(len(res.json()))]
 
-        view = Paginator(self.bot, i, li)
+        view = Paginator(self.bot, i, li, "online")
         embed = await get_embed(i, title=f"[{len(li)}] Online Players")
         embed.add_field(
             name="Names: ", value="\n".join(view.split_list[0]), inline=False
@@ -184,7 +185,7 @@ class Commands(commands.Cog):
             inline=False,
         )
         reslist: list = res.json()["residents"]
-        view = Paginator(self.bot, i, reslist)
+        view = Paginator(self.bot, i, reslist, "town")
         embed.add_field(
             name=f"[{len(reslist)}] Residents: ",
             value="\n".join(view.split_list[0]),
