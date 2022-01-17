@@ -57,3 +57,6 @@ class Messages(commands.Cog):
             for c in self.bot.commands:
                 if c.qualified_name == command:
                     print("abc")
+
+def setup(bot):
+    bot.add_cog(Messages(bot))
