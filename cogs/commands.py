@@ -371,7 +371,7 @@ class Commands(commands.Cog):
         await ctx.send(embed=embed)
 
     @slash_command(
-        name="ruins"
+        name="ruins",
         description="Use this command to get the names",
     )
     async def ruinedtowns(self, ctx):
