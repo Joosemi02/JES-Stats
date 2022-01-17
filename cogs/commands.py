@@ -211,6 +211,7 @@ class Commands(commands.Cog):
     @slash_command(
         name="nation",
         description="Use this command to find info about a specific nation.",
+        guild_ids=[911944157625483264],
     )
     async def nation(self, i: Interaction, nation=None):
         if not nation:
