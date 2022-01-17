@@ -212,7 +212,7 @@ class Commands(commands.Cog):
         name="nation",
         description="Use this command to find info about a specific nation.",
     )
-    async def n(self, i: Interaction, nation=None):
+    async def nation(self, i: Interaction, nation=None):
         if not nation:
             return await i.send("Please enter a nation name in the `nation` field.")
 
