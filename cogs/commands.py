@@ -198,7 +198,7 @@ class Commands(commands.Cog):
         await i.response.defer()
 
         res = requests.get(f"{api_2}/{resident}")
-        embed = await get_embed(i, title=f"Resident: {resident.json()['name']}")
+        embed = await get_embed(i, title=f"Resident: {res.json()['name']}")
         embed.add_field(
             name="Nation: ", value=str(res.json()["nation"]), inline=False
         )
