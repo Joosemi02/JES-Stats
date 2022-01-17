@@ -192,39 +192,38 @@ class Commands(commands.Cog):
                 ephemeral=True,
             )
 
-        if await is_server_online(i) != True:
-            return
+        if is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
+            )
+            return await i.send(embed=embed)
 
         await i.response.defer()
 
         res = requests.get(f"{api_3}/{resident}")
         embed = await get_embed(i, title=f"Resident: {res.json()['name']}")
-        embed.add_field(
-            name="Nation: ", value=str(res.json()["nation"]), inline=False
-        )
+        embed.add_field(name="Nation: ", value=str(res.json()["nation"]), inline=False)
         embed.add_field(name="Town: ", value=str(res.json()["town"]), inline=False)
         embed.add_field(name="Rank: ", value=str(res.json()["rank"]), inline=False)
 
         await i.followup.send(embed=embed)
 
-    @commands.command(
-        aliases=["nation", "nations"],
-        usage="Usage: `{prefixcommand}` `(nation)`. Leave `nation` empty to view your /linked nation info.",
+    @slash_command(
+        name="nation",
         description="Use this command to find info about a specific nation.",
     )
-    async def n(self, ctx: commands.Context, arg=None):
-        if await is_server_online(ctx) != True:
-            return
+    async def n(self, i: Interaction, nation=None):
+        if not nation:
+            return await i.send("Please enter a nation name in the `nation` field.")
 
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching nation data ...",
+        if is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
             )
-        )
+            return await i.send(embed=embed)
 
-        res = requests.get(f"{api_2}/{arg}")
-        embed = await get_embed(ctx, title=f"Nation: {res.json()['name']}")
+        res = requests.get(f"{api_2}/{nation}")
+        embed = await get_embed(i, title=f"Nation: {res.json()['name']}")
         embed.add_field(name="King: ", value=res.json()["king"], inline=True)
         embed.add_field(name="Capital: ", value=res.json()["capitalName"], inline=True)
         embed.add_field(name="Claims: ", value=str(res.json()["area"]), inline=False)
@@ -234,8 +233,8 @@ class Commands(commands.Cog):
         embed.add_field(
             name="Population: ", value=str(len(res.json()["residents"])), inline=False
         )
-        await wait_msg.delete()
-        await ctx.send(embed=embed)
+
+        await i.send(embed=embed)
 
     @commands.command(
         aliases=["notown"],
