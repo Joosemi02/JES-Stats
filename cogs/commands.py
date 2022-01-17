@@ -19,11 +19,17 @@ class PreviousButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page -= 1
-        n_embed.remove_field(4)
-        n_embed.add_field(
-            name=f"[{self.view.num}] Residents:",
-            value="\n".join(self.view.split_list[self.view.page - 1]),
-        )
+        try:
+            n_embed.remove_field(4)
+            n_embed.add_field(
+                name=f"[{self.view.num}] Residents:",
+                value="\n".join(self.view.split_list[self.view.page - 1]),
+            )
+        except:
+            n_embed.remove_field(0)
+            n_embed.add_field(
+                name="Names:", value="\n".join(self.view.split_list[self.view.page - 1])
+            )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.previous.disabled = self.view.page == 1
         self.view.next.disabled = self.view.page == self.view.total_pages
@@ -43,11 +49,17 @@ class NextButton(discord.ui.Button):
     async def callback(self, i: Interaction):
         n_embed: discord.Embed = self.view.message.embeds[0]
         self.view.page += 1
-        n_embed.remove_field(4)
-        n_embed.add_field(
-            name=f"[{self.view.num}] Residents:",
-            value="\n".join(self.view.split_list[self.view.page - 1]),
-        )
+        try:
+            n_embed.remove_field(4)
+            n_embed.add_field(
+                name=f"[{self.view.num}] Residents:",
+                value="\n".join(self.view.split_list[self.view.page - 1]),
+            )
+        except:
+            n_embed.remove_field(0)
+            n_embed.add_field(
+                name="Names:", value="\n".join(self.view.split_list[self.view.page - 1])
+            )
         self.view.count.label = f"{self.view.page}/{self.view.total_pages}"
         self.view.next.disabled = self.view.page == self.view.total_pages
         self.view.previous.disabled = self.view.page == 1
@@ -100,36 +112,35 @@ class Paginator(discord.ui.View):
 
 class Commands(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
-
-    """async def online(self):
-        if not self.arg2:
-            if not await (player := find_linked(self.ctx.message.author)):
-                return await self.ctx.send_help(self.ctx.command)
-            resident = requests.get(f"{api_1}/{player}")
-            self.arg2 = resident.json()["town"]
-        res = requests.get(api_5)
-        embed = await get_embed(
-            self.ctx, title=f"Online Players in {self.arg2.lower()}"
-        )
-        li = [
-            res.json()[i]["name"]
-            for i in range(len(res.json()))
-            if "town" in res.json()[i]
-            and res.json()[i]["town"].lower() == self.arg2.lower()
-        ]
-
-        embed.add_field(name="Online: ", value=str(len(li)), inline=False)
-        if li:
-            embed.add_field(
-                name="Names: ", value="```" + "\n".join(li) + "```", inline=False
-            )
-        await self.reslist.delete()
-        await self.ctx.send(embed=embed)"""
+        self.bot: commands.Bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.bot.user.name}: The commands extension was loaded successfully.")
+
+    @slash_command(
+        name="online",
+        description="Use this command to get a list of online players.",
+    )
+    async def online(self, i: Interaction):
+        if await is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
+            )
+            return await i.send(embed=embed)
+
+        await i.response.defer()
+
+        res = requests.get(api_5)
+        li = [res.json()[i]["name"] for i in range(len(res.json()))]
+
+        view = Paginator(self.bot, i, li)
+        embed = await get_embed(i, title=f"[{len(li)}] Online Players")
+        embed.add_field(
+            name="Names: ", value="\n".join(view.split_list[0]), inline=False
+        )
+
+        view.message = await i.followup.send(embed=embed, view=view)
 
     @slash_command(
         name="town",
@@ -293,28 +304,6 @@ class Commands(commands.Cog):
         await i.followup.send(embed=embed)
 
     @slash_command(
-        name="online",
-        description="Use this command to get a list of online players.",
-    )
-    async def online(self, i: Interaction):
-        if await is_server_online(i) == False:
-            embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
-            )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
-
-        res = requests.get(api_5)
-        embed = await get_embed(i, title="Online Players")
-        li = [res.json()[i]["name"] for i in range(len(res.json()))]
-        embed.add_field(
-            name="Names: ", value="```" + "\n".join(li) + "```", inline=False
-        )
-
-        await i.followup.send(embed=embed)
-
-    @slash_command(
         name="onlinemayors",
         description="Use this command to get a list of the mayors that are online in the server.",
     )
@@ -378,7 +367,7 @@ class Commands(commands.Cog):
                 i, "The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
-        
+
         await i.response.defer()
 
         res = requests.get(api_1)
@@ -395,7 +384,7 @@ class Commands(commands.Cog):
                 value="```" + "\n".join(li) + "```",
                 inline=False,
             )
-            
+
         await i.followup.send(embed=embed)
 
 
