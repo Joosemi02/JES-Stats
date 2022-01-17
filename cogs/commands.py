@@ -141,7 +141,7 @@ class Commands(commands.Cog):
                 "Please enter a town name in the `town` field.", ephemeral=True
             )
 
-        if is_server_online(i) == False:
+        if await is_server_online(i) == False:
             embed = await get_embed(
                 i, "The server is offline at the moment.", color=discord.Color.red()
             )
@@ -192,7 +192,7 @@ class Commands(commands.Cog):
                 ephemeral=True,
             )
 
-        if is_server_online(i) == False:
+        if await is_server_online(i) == False:
             embed = await get_embed(
                 i, "The server is offline at the moment.", color=discord.Color.red()
             )
@@ -217,11 +217,13 @@ class Commands(commands.Cog):
         if not nation:
             return await i.send("Please enter a nation name in the `nation` field.")
 
-        if is_server_online(i) == False:
+        if await is_server_online(i) == False:
             embed = await get_embed(
                 i, "The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
+
+        await i.response.defer()
 
         res = requests.get(f"{api_2}/{nation}")
         embed = await get_embed(i, title=f"Nation: {res.json()['name']}")
@@ -235,39 +237,37 @@ class Commands(commands.Cog):
             name="Population: ", value=str(len(res.json()["residents"])), inline=False
         )
 
-        await i.send(embed=embed)
+        await i.followup.send(embed=embed)
 
-    @commands.command(
-        aliases=["notown"],
-        usage="Usage: `prefixcommand`.",
-        description="Use this command to get the anme of online players that aren't in a town.",
+    @slash_command(
+        name="townless",
+        description="Use this command to get the name of online players that aren't in a town.",
+        guild_ids=[911944157625483264]
     )
-    async def townless(self, ctx):
-        if await is_server_online(ctx) != True:
-            return
-
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching resident data ...",
+    async def townless(self, i: Interaction):
+        if await is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
             )
-        )
+            return await i.send(embed=embed)
+
+        await i.response.defer()
 
         res = requests.get(api_6)
         li = [res.json()[i]["name"] for i in range(len(res.json()))]
         if li:
-            embed = await get_embed(ctx, title="Townless Players")
+            embed = await get_embed(i, title="Townless Players")
             embed.add_field(
                 name="Names: ", value="```" + "\n".join(li) + "```", inline=False
             )
         else:
             embed = await get_embed(
-                ctx,
+                i,
                 description="🚨 No townless players were found.",
                 color=discord.Color.red(),
             )
-        await wait_msg.delete()
-        await ctx.send(embed=embed)
+
+        await i.followup.send(embed=embed)
 
     @commands.command(
         aliases=["server", "jestatus"],
