@@ -339,7 +339,7 @@ class Commands(commands.Cog):
             if "rank" in res.json()[i] and res.json()[i]["rank"] == "Mayor"
         ]
         embed.add_field(
-            name="Names: ", value="\n".join(li), inline=False
+            name="Names: ", value="```" + "\n".join(li) + "```", inline=False
         )
 
         await i.followup.send(embed=embed)
@@ -368,7 +368,7 @@ class Commands(commands.Cog):
         embed.add_field(name="Online: ", value=str(len(li)), inline=False)
         if li:
             embed.add_field(
-                name="Names: ", value="\n".join(li), inline=False
+                name="Names: ", value="```" + "\n".join(li) + "```", inline=False
             )
 
         await i.followup.send(embed=embed)
