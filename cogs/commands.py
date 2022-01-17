@@ -121,6 +121,7 @@ class Commands(commands.Cog):
     @slash_command(
         name="online",
         description="Use this command to get a list of online players.",
+        guild_ids=[911944157625483264],
     )
     async def online(self, i: Interaction):
         if await is_server_online(i) == False:
