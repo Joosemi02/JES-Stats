@@ -1,4 +1,4 @@
-import nextcord as discord, requests
+import nextcord as discord
 from nextcord.ext import commands
 from nextcord import Interaction
 from config import token, db, EMBED_COLOR
@@ -49,5 +49,6 @@ async def on_ready():
 
 if __name__ == "__main__":
     bot.load_extension("cogs.commands")
+    bot.load_extension("cogs.messages")
 
     bot.run(token)
