@@ -227,8 +227,8 @@ class Commands(commands.Cog):
 
         res = requests.get(f"{api_2}/{nation}")
         embed = await get_embed(i, title=f"Nation: {res.json()['name']}")
+        embed.add_field(name="Capital: ", value=res.json()["capitalName"], inline=False)
         embed.add_field(name="King: ", value=res.json()["king"], inline=True)
-        embed.add_field(name="Capital: ", value=res.json()["capitalName"], inline=True)
         embed.add_field(name="Claims: ", value=str(res.json()["area"]), inline=True)
         embed.add_field(
             name="Towns: ", value=str(len(res.json()["towns"])), inline=True
