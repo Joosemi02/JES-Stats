@@ -269,7 +269,7 @@ class Commands(commands.Cog):
 
         await i.followup.send(embed=embed)
 
-    @commands.command(
+    @slash_command(
         name="status",
         description="Use this command to get info about the server's network.",
     )
@@ -294,37 +294,28 @@ class Commands(commands.Cog):
             
         await i.send(embed=embed)
 
-    @commands.command(
-        aliases=["onlineplayer"],
-        usage="Usage: `{prefixcommand}`.",
+    @slash_command(
+        name="online",
         description="Use this command to get a list of online players.",
     )
-    async def online(self, ctx):
-        if await is_server_online(ctx) != True:
+    async def online(self, i: Interaction):
+        if await is_server_online(i) != True:
             return
 
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching resident data ...",
-            )
-        )
 
         res = requests.get(api_5)
-        embed = await get_embed(ctx, title="Online Players")
+        embed = await get_embed(i, title="Online Players")
         li = [res.json()[i]["name"] for i in range(len(res.json()))]
         embed.add_field(
             name="Names: ", value="```" + "\n".join(li) + "```", inline=False
         )
-        await wait_msg.delete()
-        await ctx.send(embed=embed)
+        await i.send(embed=embed)
 
-    @commands.command(
-        aliases=["onlinemayors", "mayor", "omayors", "onlinem"],
-        usage="Usage: `{prefixcommand}`.",
+    @slash_command(
+        name="onlinemayors",
         description="Use this command to get a list of the mayors that are online in the server.",
     )
-    async def mayors(self, ctx):
+    async def onlinemayors(self, ctx):
         if await is_server_online(ctx) != True:
             return
 
@@ -348,11 +339,11 @@ class Commands(commands.Cog):
         await wait_msg.delete()
         await ctx.send(embed=embed)
 
-    @commands.command(
-        usage="Usage: `{prefixcommand}` `town`.",
-        description="Use this command to view who is online in a town. Leave `town` empty to view your /linked town's info.",
+    @slash_command(
+        name="townonline",
+        description="Use this command to view who is online in a town."
     )
-    async def tonline(self, ctx: commands.Context, arg=None):
+    async def townonline(self, ctx: commands.Context, arg=None):
         if await is_server_online(ctx) != True:
             return
 
@@ -379,21 +370,13 @@ class Commands(commands.Cog):
         await wait_msg.delete()
         await ctx.send(embed=embed)
 
-    @commands.command(
-        aliases=["ruined", "ruins", "ruin", "ruinedtown"],
-        usage="Usage: `{prefixcommand}`.",
+    @slash_command(
+        name="ruins"
         description="Use this command to get the names",
     )
     async def ruinedtowns(self, ctx):
         if await is_server_online(ctx) != True:
             return
-
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching town data ...",
-            )
-        )
 
         res = requests.get(api_1)
         embed = await get_embed(ctx, title="Ruined towns list")
@@ -410,75 +393,7 @@ class Commands(commands.Cog):
                 value="```" + "\n".join(li) + "```",
                 inline=False,
             )
-        await wait_msg.delete()
         await ctx.send(embed=embed)
-
-    @commands.command(
-        aliases=["sieges", "sw", "swar", "war", "siegew", "battles"],
-        usage="Usage: `{prefixcommand}` `(sieged town)`.\nLeave town empty to see a list of all sieged towns.",
-        description="Use this command to get info about a siege happening at the moment or a list of all sieges.",
-    )
-    async def siege(self, ctx: commands.Context, arg=None):
-        if await is_server_online(ctx) != True:
-            return
-
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching siege data ...",
-            )
-        )
-
-        res = requests.get(api_8)
-        if not arg:
-            if len(res.json()) > 0:
-                a = [res.json()[i]["name"] for i in range(len(res.json()))]
-                embed = await get_embed(ctx, title="Sieged Towns: ")
-                embed.add_field(
-                    name="Town Names", value=f"```{', '.join(a)}```", inline=False
-                )
-            else:
-                embed = await get_embed(
-                    ctx,
-                    description="🚨 No towns are being sieged at the moment.",
-                    color=discord.Color.red(),
-                )
-            await wait_msg.delete()
-            return await ctx.send(embed=embed)
-        for i in range(len(res.json())):
-            if res.json()[i]["name"].lower() == arg.lower():
-                a = res.json()[i]
-                embed = await get_embed(ctx, title="Sieged Town: " + a["name"])
-                embed.add_field(name="Attacker", value=a["attacker"], inline=True)
-                embed.add_field(name="Type", value=a["type"], inline=True)
-                embed.add_field(
-                    name="Dynmap",
-                    value=f"[{a['x']},{a['z']}](http://jes.enviromc.com:25568/#/?worldname=earth&mapname=flat&zoom=9&x={a['x']}&y=64&z={a['z']})",
-                    inline=False,
-                )
-                embed.add_field(name="Siege Balance", value=a["balance"], inline=False)
-                if int(a["balance"]) > 0:
-                    embed.add_field(
-                        name="Current Winner", value="Attackers", inline=True
-                    )
-                else:
-                    embed.add_field(
-                        name="Current Winner", value="Defenders", inline=True
-                    )
-                embed.add_field(name="Time Left", value=a["time"], inline=False)
-                embed.add_field(name="War Chest", value=a["chest"], inline=False)
-
-                await wait_msg.delete()
-                await ctx.send(embed=embed)
-                return
-
-        embed = await get_embed(
-            ctx,
-            description="<a:tnt:912834869845958686> This town doesn't exist or isn't besieged...",
-            color=discord.Color.red(),
-        )
-        await ctx.reply(embed=embed)
-
 
 def setup(bot):
     bot.add_cog(Commands(bot))
