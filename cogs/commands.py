@@ -242,7 +242,6 @@ class Commands(commands.Cog):
     @slash_command(
         name="townless",
         description="Use this command to get the name of online players that aren't in a town.",
-        guild_ids=[911944157625483264],
     )
     async def townless(self, i: Interaction):
         if await is_server_online(i) == False:
@@ -272,36 +271,42 @@ class Commands(commands.Cog):
     @slash_command(
         name="status",
         description="Use this command to get info about the server's network.",
+        guild_ids=[911944157625483264],
     )
     async def status(self, i: Interaction):
+        await i.response.defer()
+
         res = requests.get(api_4)
         embed = await get_embed(i, title="Network Status")
         embed.add_field(
             name="Towny: ", value=f'```{res.json()["towny"]}/110```', inline=False
         )
-
         embed.add_field(
             name="Network: ",
             value=f'```{res.json()["online"]}/110```',
             inline=False,
         )
-
         active = res.json()["serverOnline"]
         if active:
             embed.add_field(name="Server: ", value=":green_circle:", inline=False)
         else:
             embed.add_field(name="Server: ", value=":red_circle:", inline=False)
-            
-        await i.send(embed=embed)
+
+        await i.followup.send(embed=embed)
 
     @slash_command(
         name="online",
         description="Use this command to get a list of online players.",
+        guild_ids=[911944157625483264],
     )
     async def online(self, i: Interaction):
-        if await is_server_online(i) != True:
-            return
+        if await is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
+            )
+            return await i.send(embed=embed)
 
+        await i.response.defer()
 
         res = requests.get(api_5)
         embed = await get_embed(i, title="Online Players")
@@ -309,91 +314,96 @@ class Commands(commands.Cog):
         embed.add_field(
             name="Names: ", value="```" + "\n".join(li) + "```", inline=False
         )
-        await i.send(embed=embed)
+
+        await i.followup.send(embed=embed)
 
     @slash_command(
         name="onlinemayors",
         description="Use this command to get a list of the mayors that are online in the server.",
+        guild_ids=[911944157625483264],
     )
-    async def onlinemayors(self, ctx):
-        if await is_server_online(ctx) != True:
-            return
-
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching mayor data ...",
+    async def onlinemayors(self, i: Interaction):
+        if await is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
             )
-        )
+            return await i.send(embed=embed)
+
+        await i.response.defer()
+
         res = requests.get(api_5)
-        embed = await get_embed(ctx, title="Online Mayors")
+        embed = await get_embed(i, title="Online Mayors")
         li = [
             f"{res.json()[i]['name']}({res.json()[i]['town']})"
             for i in range(len(res.json()))
             if "rank" in res.json()[i] and res.json()[i]["rank"] == "Mayor"
         ]
-
         embed.add_field(
             name="Names: ", value="```" + "\n".join(li) + "```", inline=False
         )
-        await wait_msg.delete()
-        await ctx.send(embed=embed)
+
+        await i.followup.send(embed=embed)
 
     @slash_command(
         name="townonline",
-        description="Use this command to view who is online in a town."
+        description="Use this command to view who is online in a town.",
+        guild_ids=[911944157625483264],
     )
-    async def townonline(self, ctx: commands.Context, arg=None):
-        if await is_server_online(ctx) != True:
-            return
-
-        wait_msg = await ctx.reply(
-            embed=await get_embed(
-                ctx=ctx,
-                description="<a:happy_red:912452454669508618> Fetching resident data ...",
+    async def townonline(self, i: Interaction, town=None):
+        if await is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
             )
-        )
+            return await i.send(embed=embed)
+
+        await i.response.defer()
 
         res = requests.get(api_5)
-        embed = await get_embed(ctx, title=f"Online Players in {arg}")
+        embed = await get_embed(i, title=f"Online Players in {town}")
         li = [
             res.json()[i]["name"]
             for i in range(len(res.json()))
-            if "town" in res.json()[i] and res.json()[i]["town"].lower() == arg.lower()
+            if "town" in res.json()[i] and res.json()[i]["town"].lower() == town.lower()
         ]
-
         embed.add_field(name="Online: ", value=str(len(li)), inline=False)
         if li:
             embed.add_field(
                 name="Names: ", value="```" + "\n".join(li) + "```", inline=False
             )
-        await wait_msg.delete()
-        await ctx.send(embed=embed)
+
+        await i.followup.send(embed=embed)
 
     @slash_command(
         name="ruins",
         description="Use this command to get the names",
+        guild_ids=[911944157625483264],
     )
-    async def ruinedtowns(self, ctx):
-        if await is_server_online(ctx) != True:
-            return
+    async def ruinedtowns(self, i: Interaction):
+        if await is_server_online(i) == False:
+            embed = await get_embed(
+                i, "The server is offline at the moment.", color=discord.Color.red()
+            )
+            return await i.send(embed=embed)
+        
+        await i.response.defer()
 
         res = requests.get(api_1)
-        embed = await get_embed(ctx, title="Ruined towns list")
+        embed = await get_embed(i, title="Ruined towns list")
         li = [
             res.json()[i]["name"]
             for i in range(len(res.json()))
             if len(res.json()[i]["residents"]) == 1
             and res.json()[i]["residents"][0][:3].lower() == "bot"
         ]
-
         if li:
             embed.add_field(
                 name="Town Names: ",
                 value="```" + "\n".join(li) + "```",
                 inline=False,
             )
-        await ctx.send(embed=embed)
+            
+        await i.response.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Commands(bot))
