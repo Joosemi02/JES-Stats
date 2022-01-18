@@ -49,6 +49,5 @@ async def on_ready():
 
 if __name__ == "__main__":
     bot.load_extension("cogs.commands")
-    bot.load_extension("cogs.messages")
 
     bot.run(token)
