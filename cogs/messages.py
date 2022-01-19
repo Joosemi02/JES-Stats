@@ -57,6 +57,10 @@ class Messages(commands.Cog):
             for c in self.bot.commands:
                 if c.qualified_name == command:
                     print("abc")
+    
+    @commands.command()
+    async def guilds(self, ctx: commands.Context):
+        await ctx.send("\n".join(self.bot.guilds))
 
 def setup(bot):
     bot.add_cog(Messages(bot))
