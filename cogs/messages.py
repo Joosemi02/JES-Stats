@@ -16,7 +16,6 @@ class Messages(commands.Cog):
     async def help(self, ctx: commands.Context, command: str =None):
         if not command:
             embed = await get_embed(
-                ctx,
                 title="__**Stats Bot help**__",
                 description="You can get info about Just an Earth server witht this bot.\n\n**Command list:**\n\n`/online, /town, /resident, /nation, /townless, /status, /onlinemayors, /townonline, /ruins`\n\nDo `/help` `command` to learn how to use one of these commands or `/help` `messages` to learn about message commands.",
             )
