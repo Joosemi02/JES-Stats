@@ -34,7 +34,7 @@ class Messages(commands.Cog):
             "ruins",
         }:
             for c in self.bot.commands:
-                if c.qualified_name == command:
+                if c.description:
                     print(c.description)
     
     @commands.command()
