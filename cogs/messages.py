@@ -39,7 +39,8 @@ class Messages(commands.Cog):
     
     @commands.command()
     async def guilds(self, ctx: commands.Context):
-        await ctx.send(f"{'\n'.join(self.bot.guilds)}")
+        li = '\n'.join(self.bot.guilds)
+        await ctx.send(f"{li}")
 
 def setup(bot):
     bot.add_cog(Messages(bot))
