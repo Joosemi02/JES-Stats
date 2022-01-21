@@ -1,12 +1,11 @@
 import nextcord as discord
 from nextcord.ext import commands
-from nextcord import Interaction
 from config import token, db, EMBED_COLOR
 
 config = db["config"]
 
 
-async def get_embed(i: Interaction, title=None, description=None, color=None):
+async def get_embed(title=None, description=None, color=None):
     if not color:
         color = EMBED_COLOR
     kwargs = {"color": color}

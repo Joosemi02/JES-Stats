@@ -126,7 +126,7 @@ class Commands(commands.Cog):
     async def online(self, i: Interaction):
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
@@ -136,7 +136,7 @@ class Commands(commands.Cog):
         li = [res.json()[i]["name"] for i in range(len(res.json()))]
 
         view = Paginator(self.bot, i, li, "online")
-        embed = await get_embed(i, title=f"[{len(li)}] Online Players")
+        embed = await get_embed(title=f"[{len(li)}] Online Players")
         embed.add_field(
             name="Names: ", value="\n".join(view.split_list[0]), inline=False
         )
@@ -155,7 +155,7 @@ class Commands(commands.Cog):
 
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
@@ -163,14 +163,13 @@ class Commands(commands.Cog):
         if res.json() == "That town does not exist!":
             return await i.send(
                 embed=await get_embed(
-                    i,
                     description="<a:crya:912762373591420989> This town doesn't exist...",
                     color=discord.Color.red(),
                 )
             )
 
         await i.response.defer()
-        embed = await get_embed(i, f"Town: {res.json()['name']}")
+        embed = await get_embed(title=f"Town: {res.json()['name']}")
         embed.add_field(name="Mayor", value=res.json()["mayor"], inline=True)
         embed.add_field(name="Nation", value=res.json()["nation"], inline=True)
         embed.add_field(
@@ -206,14 +205,14 @@ class Commands(commands.Cog):
 
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
         await i.response.defer()
 
         res = requests.get(f"{api_3}/{resident}")
-        embed = await get_embed(i, title=f"Resident: {res.json()['name']}")
+        embed = await get_embed(title=f"Resident: {res.json()['name']}")
         embed.add_field(name="Nation: ", value=str(res.json()["nation"]), inline=False)
         embed.add_field(name="Town: ", value=str(res.json()["town"]), inline=False)
         embed.add_field(name="Rank: ", value=str(res.json()["rank"]), inline=False)
@@ -230,14 +229,14 @@ class Commands(commands.Cog):
 
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
         await i.response.defer()
 
         res = requests.get(f"{api_2}/{nation}")
-        embed = await get_embed(i, title=f"Nation: {res.json()['name']}")
+        embed = await get_embed(title=f"Nation: {res.json()['name']}")
         embed.add_field(name="Capital: ", value=res.json()["capitalName"], inline=True)
         embed.add_field(name="King: ", value=res.json()["king"], inline=True)
         embed.add_field(
@@ -257,7 +256,7 @@ class Commands(commands.Cog):
     async def townless(self, i: Interaction):
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
@@ -266,13 +265,12 @@ class Commands(commands.Cog):
         res = requests.get(api_6)
         li = [res.json()[i]["name"] for i in range(len(res.json()))]
         if li:
-            embed = await get_embed(i, title="Townless Players")
+            embed = await get_embed(title="Townless Players")
             embed.add_field(
                 name="Names: ", value="```" + "\n".join(li) + "```", inline=False
             )
         else:
             embed = await get_embed(
-                i,
                 description="🚨 No townless players were found.",
                 color=discord.Color.red(),
             )
@@ -287,7 +285,7 @@ class Commands(commands.Cog):
         await i.response.defer()
 
         res = requests.get(api_4)
-        embed = await get_embed(i, title="Network Status")
+        embed = await get_embed(title="Network Status")
         embed.add_field(
             name="Main Earth:", value=f'```{res.json()["towny"]}/110```', inline=False
         )
@@ -311,14 +309,14 @@ class Commands(commands.Cog):
     async def onlinemayors(self, i: Interaction):
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
         await i.response.defer()
 
         res = requests.get(api_5)
-        embed = await get_embed(i, title="Online Mayors")
+        embed = await get_embed(title="Online Mayors")
         li = [
             f"{res.json()[i]['name']}: {res.json()[i]['town']}"
             for i in range(len(res.json()))
@@ -337,14 +335,14 @@ class Commands(commands.Cog):
     async def townonline(self, i: Interaction, town=None):
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
         await i.response.defer()
 
         res = requests.get(api_5)
-        embed = await get_embed(i, title=f"Online Players in {town}")
+        embed = await get_embed(title=f"Online Players in {town}")
         li = [
             res.json()[i]["name"]
             for i in range(len(res.json()))
@@ -365,14 +363,14 @@ class Commands(commands.Cog):
     async def ruinedtowns(self, i: Interaction):
         if await is_server_online(i) == False:
             embed = await get_embed(
-                i, "The server is offline at the moment.", color=discord.Color.red()
+                title="The server is offline at the moment.", color=discord.Color.red()
             )
             return await i.send(embed=embed)
 
         await i.response.defer()
 
         res = requests.get(api_1)
-        embed = await get_embed(i, title="Ruined towns list")
+        embed = await get_embed(title="Ruined towns list")
         li = [
             res.json()[i]["name"]
             for i in range(len(res.json()))
