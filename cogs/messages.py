@@ -45,9 +45,10 @@ class Messages(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.is_owner()
     async def guilds(self, ctx: commands.Context):
         li = "\n".join(g.name for g in self.bot.guilds)
-        embed = discord.Embed(description=li)
+        embed = get_embed(description=li)
         await ctx.send(embed=embed)
 
 
