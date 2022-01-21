@@ -11,6 +11,20 @@ class Messages(commands.Cog):
     async def on_ready(self):
         print(f"{self.bot.user.name}: The messages extension was loaded successfully.")
 
+    async def send_messages(self, ctx):
+        li = []
+        for cmd in self.bot.commands:
+            if cmd.brief == "messages":
+                li.append(cmd.name)
+        embed = get_embed(tite="__**Message commands**__", description=li)
+        await ctx.send(embed=embed)
+
+    @discord.slash_command(
+        name="messages", description="Get info about message commands."
+    )
+    async def messages(self, i):
+        await self.send_messages(i)
+
     @commands.command()
     async def help(self, ctx: commands.Context, command: str = None):
         if not command:
@@ -21,11 +35,7 @@ class Messages(commands.Cog):
             return await ctx.send(embed=embed)
         command = command.lower()
         if command == "messages":
-            embed = get_embed(tite="__**Message commands**__")
-            for cmd in self.bot.commands:
-                if cmd.brief == "messages":
-                    embed.add_field(name=cmd.name, value=cmd.description)
-            await ctx.send(embed=embed)
+            await self.send_messages(ctx)
         slash_commands = {
             "online": "Use this command to get a list of online players.",
             "town": "Use this command to view a town's info.",
