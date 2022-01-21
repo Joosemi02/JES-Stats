@@ -155,7 +155,7 @@ class Messages(commands.Cog):
     async def vehicles(self, ctx):
         await ctx.send("https://vehicles.gitbook.io/wiki/faq")
 
-    @commands.command(brief="messages", aliases=["jestats", "add"])
+    @commands.command(brief="messages", aliases=["jestats"])
     async def add(self, ctx):
         await ctx.send(
             "https://discord.com/api/oauth2/authorize?client_id=931130747841048638&permissions=274877908992&scope=applications.commands%20bot"
