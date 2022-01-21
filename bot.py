@@ -5,7 +5,7 @@ from config import token, db, EMBED_COLOR
 config = db["config"]
 
 
-async def get_embed(title=None, description=None, color=None):
+def get_embed(title=None, description=None, color=None):
     if not color:
         color = EMBED_COLOR
     kwargs = {"color": color}
