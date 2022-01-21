@@ -51,6 +51,108 @@ class Messages(commands.Cog):
         embed = get_embed(description=li)
         await ctx.send(embed=embed)
 
+    @commands.command(brief="messages")
+    async def brewery(self, ctx):
+        await ctx.send("https://github.com/DieReicheErethons/Brewery/wiki/Homepage")
+
+    @commands.command(brief="messages")
+    async def ip(self, ctx):
+        embed = get_embed(
+            title="Just an Earth Server",
+            description="Name: JES (Any name will work)\nIP: jes.earth\nBedrock Port: 19132 (default)\n\n- How to join in PC, mobile, PS4/5, Xbox, Nintendo Switch: https://discord.gg/g8VBhuDqGC",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="messages")
+    async def map(self, ctx):
+        embed = get_embed(
+            description="Earth1: http://map.jes.earth/\nEarth2: http://map2.jes.earth/\nSMP: http://smp.jes.earth/",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="messages")
+    async def marriage(self, ctx):
+        embed = get_embed(
+            title="➡️Unofficial Marriage Server",
+            description="https://discord.gg/7gyvNDAEPJ",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="messages")
+    async def mcmmo(self, ctx):
+        embed = get_embed(
+            description="https://mcmmo.org/wiki/Main_Page",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="messages")
+    async def news(self, ctx):
+        embed = get_embed(
+            title="UNOFFICIAL JES NEWS",
+            description="https://discord.gg/9dC2tE9JQs\nhttps://discord.gg/urz3ZUdm",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="messages")
+    async def oneblock(self, ctx):
+        embed = get_embed(
+            title="Oneblock commands",
+            description="(do /is help in game for more)\n/is\n/is go\n/is level\n/is count\n/is phases\n/is spawn\n/is warp\n/is reset\n/is info (player)\n/is setname (name)\n/is language (language)\n/is ban\n/is unban\n/is banlist\n/is expel\n/is team\n/is team invite (player)\n/is team accept",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="messages")
+    async def reputation(self, ctx):
+        embed = get_embed(
+            title="Reputation",
+            description="**All Tags:**\nNEW -> USER -> KNOWN -> TRUSTED\n\n**User requirements:**\n- 5 days of /playtime or a donator rank.\n\nJoin https://discord.gg/a4VuZkk3mr to request your [USER] tag.",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(
+        brief="messages", aliases=["qs", "shop", "shops", "cs", "quickshop"]
+    )
+    async def chestshop(self, ctx):
+        await ctx.send("https://www.youtube.com/watch?v=o7hgoNCDWQk")
+
+    @commands.command(brief="messages")
+    async def rules(self, ctx):
+        await ctx.send("http://rules.jes.earth/")
+
+    @commands.command(brief="messages")
+    async def spawners(self, ctx):
+        await ctx.send(
+            "Elder Guardian/Guardian: disabled\nZombie Villager: disabled\nDonkey: spawned only by egg\nMule: spawned only by egg\nCreeper: only by egg\nSkeleton: only by egg\nSpider: only by egg\nZombie: only by egg\nSlime: doesn't work/disabled\nEnderman: only by egg\nCave spider: only by egg\nBlaze: spawners\nPig: spawners\nSheep: spawners\nCow: spawners\nChickens: spawners\nWolf: enabled\nHorse: enabled\nRabbit: enabled\nParrot: disabled"
+        )
+
+    @commands.command(brief="messages")
+    async def siegewar(self, ctx):
+        embed = get_embed(
+            title="What is SiegeWar?",
+            description="- ⚔️ **Sieges**: Wars are conducted by means of sieges. A siege occurs when a nation attacks a town.\n- 🤖 **Automatic**: Sieges are started by players and automatically managed by the plugin. Daily staff management of war is not required.\n- 🏙️ **Minimally Destructive**: During sieges, towns cannot be damaged or stolen from.\n- 🚶 **Slow Paced**: Sieges last 3 days, giving defenders a chance to respond to attacks, and also making the system friendly to casual players.\n- 🗺️ **Geopolitical**: The whole server is involved, with no opt-outs. Nations and towns always have a Peaceful option, where they can become immune to attack, but vulnerable to peaceful occupation.\n- ♟️ **Strategic**: The system has many strategic elements (e.g. deciding when/where/who to attack, organizing army composition/logisitics/movement, and diplomacy/occupation/peacefulness etc). This can be great for thoughful/mature playerbases, but for servers which require more simplistic PVP contests, alternative war systems should be considered.\n- 🍎 **Non-Toxic**: If you install the recommended TownyResources plugin, this can help to focus wars on the strategic acquisition of material resources, rather than the toxic settlement of personal grudges.\n\nhttps://github.com/TownyAdvanced/SiegeWar",
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="messages")
+    async def support(self, ctx):
+        await ctx.send("https://discord.gg/TUugwRrRmJ")
+
+    @commands.command(brief="messages")
+    async def towny(self, ctx):
+        await ctx.send("https://github.com/TownyAdvanced/Towny/wiki/Towny-Commands")
+
+    @commands.command(brief="messages")
+    async def vehicles(self, ctx):
+        await ctx.send("https://vehicles.gitbook.io/wiki/faq")
+
+    @commands.command(brief="messages", aliases=["tr"])
+    async def townyresources(self, ctx):
+        embed = get_embed(
+            title="Towny Resources",
+            description="- TownyResources adds value to towns, by giving each one a unique set of automatically-produced resources which can be collected by players (e.g. Emeralds, Coal, Oak Log, Wheat etc.).\n\n**BENEFITS:**\n\n- :cityscape: Encourages Town Building.\n- :united_nations: Encourages Nation Building.\n- :moneybag: Encourages Trading.\n- :zzz: Reduces Grind.\n- :woman_fairy: Assists Roleplaying.\n- :crossed_swords: Improves the SiegeWar experience, by adding a new non-toxic reason for war: Capturing Resources.\n\nUser Guide (Read More): https://github.com/TownyAdvanced/TownyResources#readme",
+        )
+        await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Messages(bot))
