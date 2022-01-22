@@ -12,11 +12,8 @@ class Messages(commands.Cog):
         print(f"{self.bot.user.name}: The messages extension was loaded successfully.")
 
     async def send_messages(self, ctx):
-        li = []
-        for cmd in self.bot.commands:
-            if cmd.brief == "messages":
-                li.append(cmd.name)
-        embed = get_embed(tite="__**Message commands**__", description=li)
+        li = [cmd.name for cmd in self.bot.commands if cmd.brief == "messages"]
+        embed = get_embed(title="__**Message commands**__", description="\n".join(li))
         await ctx.send(embed=embed)
 
     @discord.slash_command(
