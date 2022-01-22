@@ -175,7 +175,7 @@ class Messages(commands.Cog):
         )
         g_embed.set_footer(
             text="Coal, iron and other ores can be found anywhere in the map.",
-            icon_url=self.bot.user.icon.url,
+            icon_url=self.bot.user.avatar.url,
         )
         await ctx.send(embeds=[d_embed, g_embed])
 
