@@ -54,13 +54,6 @@ class Messages(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-    @commands.command()
-    @commands.is_owner()
-    async def guilds(self, ctx: commands.Context):
-        li = "\n".join(g.name for g in self.bot.guilds)
-        embed = get_embed(description=li)
-        await ctx.send(embed=embed)
-
     @commands.command(brief="messages")
     async def brewery(self, ctx):
         await ctx.send("https://github.com/DieReicheErethons/Brewery/wiki/Homepage")

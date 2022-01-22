@@ -45,6 +45,20 @@ async def on_ready():
         ),
     )
 
+@bot.command()
+@commands.is_owner()
+async def guilds(ctx: commands.Context):
+    li = "\n".join(g.name for g in bot.guilds)
+    embed = get_embed(description=li)
+    await ctx.send(embed=embed)
+    
+@bot.command()
+@commands.is_owner()
+async def crash(ctx: commands.Context, bool: bool):
+    if bool:
+        await config.update_one({"_id": "online"}, {"$set": {"crashed": True}})
+    else:
+        await config.update_one({"_id": "online"}, {"$set": {"crashed": False}})
 
 if __name__ == "__main__":
     bot.load_extension("cogs.commands")
