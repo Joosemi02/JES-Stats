@@ -159,6 +159,21 @@ class Messages(commands.Cog):
         )
         await ctx.send(embed=embed)
 
+    @commands.command(brief="messages")
+    async def ores(self, ctx: commands.Context):
+        d_embed = get_embed(title="Diamond Ore Distribution")
+        d_embed.set_image(
+            url="https://images-ext-1.discordapp.net/external/peMCFOgvgO1lEz7UZvhtAm7XVJQPrhrtBrrxzGWNH8Y/https/cdn-longterm.mee6.xyz/plugins/commands/images/767803717549948940/eb46e4c6f24326a4a05f623dd582e602f223f768b0299a021cdfe17435c2a0f1.jpeg"
+        )
+        g_embed = get_embed(title="Gold Ore Distribution")
+        g_embed.set_image(
+            url="https://images-ext-2.discordapp.net/external/2XORysVW07j-fooscm7kPg_zmBE9w_gogkqd1vjj8a4/https/cdn-longterm.mee6.xyz/plugins/commands/images/767803717549948940/4ea2e0edf332f91c78fa81aa381dc050f2d09fd3e18dc1e761f7d79ed5cd0532.jpeg"
+        )
+        g_embed.set_footer(
+            text="Coal, iron and other ores can be found anywhere in the map."
+        )
+        await ctx.send(embeds=[d_embed, g_embed])
+
 
 def setup(bot):
     bot.add_cog(Messages(bot))
