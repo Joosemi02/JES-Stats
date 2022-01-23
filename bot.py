@@ -54,7 +54,7 @@ async def guilds(ctx: commands.Context):
 
 @bot.command()
 async def test(ctx):
-    print(await bot.application_info().members)
+    await ctx.send(await bot.application_info().members)
 
 @bot.command()
 @commands.is_owner()
