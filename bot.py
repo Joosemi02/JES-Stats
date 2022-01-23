@@ -54,11 +54,12 @@ async def guilds(ctx: commands.Context):
     
 @bot.command()
 @commands.is_owner()
-async def crash(ctx: commands.Context, bool: bool):
+async def crashed(ctx: commands.Context, bool: bool):
     if bool:
         await config.update_one({"_id": "online"}, {"$set": {"crashed": True}})
     else:
         await config.update_one({"_id": "online"}, {"$set": {"crashed": False}})
+    await ctx.message.delete()
 
 if __name__ == "__main__":
     bot.load_extension("cogs.commands")

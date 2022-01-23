@@ -124,6 +124,7 @@ class Commands(commands.Cog):
         description="Use this command to get a list of online players.",
     )
     async def online(self, i: Interaction):
+        print(1)
         if await is_server_online(i) == False:
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
