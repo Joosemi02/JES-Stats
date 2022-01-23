@@ -124,14 +124,13 @@ class Commands(commands.Cog):
         description="Use this command to get a list of online players.",
     )
     async def online(self, i: Interaction):
-        print(1)
+        await i.response.defer()
+
         if await is_server_online(i) == False:
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
+            return await i.followup.send(embed=embed)
 
         res = requests.get(api_5)
         li = [res.json()[i]["name"] for i in range(len(res.json()))]
@@ -149,8 +148,10 @@ class Commands(commands.Cog):
         description="Use this command to view a town's info.",
     )
     async def town(self, i: Interaction, town=None):
+        await i.response.defer()
+
         if not town:
-            return await i.send(
+            return await i.followup.send(
                 "Please enter a town name in the `town` field.", ephemeral=True
             )
 
@@ -158,7 +159,7 @@ class Commands(commands.Cog):
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
+            return await i.followup.send(embed=embed)
 
         res = requests.get(f"{api_1}/{town}")
         if res.json() == "That town does not exist!":
@@ -169,7 +170,6 @@ class Commands(commands.Cog):
                 )
             )
 
-        await i.response.defer()
         embed = get_embed(title=f"Town: {res.json()['name']}")
         embed.add_field(name="Mayor", value=res.json()["mayor"], inline=True)
         embed.add_field(name="Nation", value=res.json()["nation"], inline=True)
@@ -198,8 +198,10 @@ class Commands(commands.Cog):
         description="Use this command to get a player's info. Make sure to type the '_' if it's a bedrock player.",
     )
     async def resident(self, i: Interaction, resident=None):
+        await i.response.defer()
+
         if not resident:
-            return await i.send(
+            return await i.followup.send(
                 "Please enter a resident username in the `resident` field.",
                 ephemeral=True,
             )
@@ -208,9 +210,7 @@ class Commands(commands.Cog):
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
+            return await i.followup.send(embed=embed)
 
         res = requests.get(f"{api_3}/{resident}")
         embed = get_embed(title=f"Resident: {res.json()['name']}")
@@ -225,16 +225,18 @@ class Commands(commands.Cog):
         description="Use this command to find info about a specific nation.",
     )
     async def nation(self, i: Interaction, nation=None):
+        await i.response.defer()
+
         if not nation:
-            return await i.send("Please enter a nation name in the `nation` field.")
+            return await i.followup.send(
+                "Please enter a nation name in the `nation` field."
+            )
 
         if await is_server_online(i) == False:
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
+            return await i.followup.send(embed=embed)
 
         res = requests.get(f"{api_2}/{nation}")
         embed = get_embed(title=f"Nation: {res.json()['name']}")
@@ -255,13 +257,13 @@ class Commands(commands.Cog):
         description="Use this command to get the name of online players that aren't in a town.",
     )
     async def townless(self, i: Interaction):
+        await i.response.defer()
+
         if await is_server_online(i) == False:
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
+            return await i.followup.send(embed=embed)
 
         res = requests.get(api_6)
         li = [res.json()[i]["name"] for i in range(len(res.json()))]
@@ -308,13 +310,13 @@ class Commands(commands.Cog):
         description="Use this command to get a list of the mayors that are online in the server.",
     )
     async def onlinemayors(self, i: Interaction):
+        await i.response.defer()
+
         if await is_server_online(i) == False:
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
+            return await i.followup.send(embed=embed)
 
         res = requests.get(api_5)
         embed = get_embed(title="Online Mayors")
@@ -334,13 +336,13 @@ class Commands(commands.Cog):
         description="Use this command to view who is online in a town.",
     )
     async def townonline(self, i: Interaction, town=None):
+        await i.response.defer()
+
         if await is_server_online(i) == False:
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
+            return await i.followup.send(embed=embed)
 
         res = requests.get(api_5)
         embed = get_embed(title=f"Online Players in {town}")
@@ -362,13 +364,13 @@ class Commands(commands.Cog):
         description="Use this command to get the names.",
     )
     async def ruinedtowns(self, i: Interaction):
+        await i.response.defer()
+
         if await is_server_online(i) == False:
             embed = get_embed(
                 title="The server is offline at the moment.", color=discord.Color.red()
             )
-            return await i.send(embed=embed)
-
-        await i.response.defer()
+            return await i.followup.send(embed=embed)
 
         res = requests.get(api_1)
         embed = get_embed(title="Ruined towns list")
