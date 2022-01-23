@@ -51,7 +51,11 @@ async def guilds(ctx: commands.Context):
     li = "\n".join(g.name for g in bot.guilds)
     embed = get_embed(description=li)
     await ctx.send(embed=embed)
-    
+
+@bot.command()
+async def test(ctx):
+    print(await bot.application_info().members)
+
 @bot.command()
 @commands.is_owner()
 async def crashed(ctx: commands.Context, bool: bool):
