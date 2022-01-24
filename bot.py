@@ -45,6 +45,7 @@ async def on_ready():
         ),
     )
 
+
 @bot.command()
 @commands.is_owner()
 async def guilds(ctx: commands.Context):
@@ -52,9 +53,11 @@ async def guilds(ctx: commands.Context):
     embed = get_embed(description=li)
     await ctx.send(embed=embed)
 
+
 @bot.command()
 async def test(ctx):
     await ctx.send(await bot.application_info().members)
+
 
 @bot.command()
 @commands.is_owner()
@@ -64,6 +67,7 @@ async def crashed(ctx: commands.Context, bool: bool):
     else:
         await config.update_one({"_id": "online"}, {"$set": {"crashed": False}})
     await ctx.message.delete()
+
 
 if __name__ == "__main__":
     bot.load_extension("cogs.commands")
