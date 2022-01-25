@@ -3,7 +3,7 @@ import matplotlib
 import nextcord as discord
 import requests
 from nextcord.ext import commands, tasks
-from config import db, api_5, api_6, api_7, api_8
+from config import db, api_5
 
 graphs = db["graphs"]
 
@@ -39,6 +39,10 @@ class Graphs(commands.Cog):
                     "$set": {f"{time}": {"spain": spain, "online": online}},
                 }
             )
+    
+    @get_data.before_loop
+    async def before_my_task(self):
+        await self.bot.wait_until_ready()
 
 def setup(bot):
     bot.add_cog(Graphs(bot))
