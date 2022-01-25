@@ -33,17 +33,16 @@ class Graphs(commands.Cog):
         n = datetime.now()
         time = f"{n.hour}.{n.minute}"
         day = date.today()
-        try:
-            await graphs.insert_one(
-                {"_id": day, f"{time}": {"spain": spain, "online": online}}
-            )
-        except:
-            await graphs.update_one(
-                {
-                    "_id": day,
-                    "$set": {f"{time}": {"spain": spain, "online": online}},
-                }
-            )
+        await graphs.insert_one(
+            {"_id": day, f"{time}": {"spain": spain, "online": online}}
+        )
+        await graphs.update_one(
+            {"_id": day},
+            {
+                "$set": {f"{time}": {"spain": spain, "online": online}},
+            },
+        )
+
 
 def setup(bot):
     bot.add_cog(Graphs(bot))
