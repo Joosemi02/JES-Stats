@@ -21,7 +21,7 @@ def get_embed(title=None, description=None, color=None):
 
 
 async def is_server_online(i):
-    online = await config.find_one({"_id": "online"})
+    online = await config.find_one({"_id": "config"})
     return online["crashed"] != True
 
 
@@ -63,9 +63,9 @@ async def test(ctx):
 @commands.is_owner()
 async def crashed(ctx: commands.Context, bool: bool):
     if bool:
-        await config.update_one({"_id": "online"}, {"$set": {"crashed": True}})
+        await config.update_one({"_id": "config"}, {"$set": {"crashed": True}})
     else:
-        await config.update_one({"_id": "online"}, {"$set": {"crashed": False}})
+        await config.update_one({"_id": "config"}, {"$set": {"crashed": False}})
     await ctx.message.delete()
 
 
