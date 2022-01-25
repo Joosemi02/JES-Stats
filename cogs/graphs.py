@@ -1,8 +1,7 @@
 import matplotlib
 import nextcord as discord
 import requests
-from asyncio import tasks
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 from config import db, api_1, api_2, api_3, api_4, api_5, api_6, api_7, api_8
 
 graphs = db["graphs"]
@@ -15,7 +14,7 @@ class Graphs(commands.Cog):
     async def on_ready(self):
         print(f"{self.bot.user.name}: The graphs extension was loaded successfully.")
 
-    @tasks.loop()
+    @tasks.loop(minutes=10)
     async def get_data():
         pass
     
