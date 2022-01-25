@@ -16,7 +16,7 @@ class Graphs(commands.Cog):
 
     @tasks.loop(minutes=10)
     async def get_data():
-        pass
+        nations = 0
     
     @commands.command()
     async def test(self, ctx):

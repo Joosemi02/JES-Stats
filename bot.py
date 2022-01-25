@@ -55,7 +55,7 @@ async def guilds(ctx: commands.Context):
 
 
 @bot.command()
-async def test(ctx):
+async def testo(ctx):
     await ctx.send(await bot.application_info().members)
 
 
