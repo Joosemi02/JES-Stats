@@ -3,7 +3,7 @@ import matplotlib
 import nextcord as discord
 import requests
 from nextcord.ext import commands, tasks
-from config import db, api_5, api_6, api_7
+from config import db, api_5, api_6, api_7, api_8
 
 graphs = db["graphs"]
 
@@ -40,8 +40,7 @@ class Graphs(commands.Cog):
 
     @commands.command()
     async def test(self, ctx):
-        print(requests.get(api_6).json())
-        # print(requests.get(api_7).json())
+        print(requests.get(api_7).json())
 
 
 def setup(bot):

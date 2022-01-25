@@ -1,4 +1,5 @@
-[
+# online players
+li = [
     {
         "x": 33237,
         "y": 64,
@@ -20,5 +21,5 @@
         "town": "Trkiye",
         "nation": "No Nation",
         "rank": "Resident",
-    }
+    },
 ]

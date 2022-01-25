@@ -1,4 +1,5 @@
-{
+# status
+d = {
     "serverOnline": True,
     "online": 32,
     "max": 500,
