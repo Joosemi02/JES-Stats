@@ -74,8 +74,8 @@ class Graphs(commands.Cog):
         spain = []
         online = []
         for n in data.keys():
-            spain.append(data[n]["spain"])
-            online.append(data[n]["online"])
+            spain.append(data[n])
+            online.append(data[n][0])
         fig = plt.figure()
         fig, ax, bx = plt.subplots(2, 2)
         ax.plot(data.keys(), spain)
