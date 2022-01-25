@@ -23,6 +23,16 @@ class Graphs(commands.Cog):
         print(f"{self.bot.user.name}: The graphs extension was loaded successfully.")
         self.get_data.start()
 
+    async def send_graph(self):
+        c: discord.TextChannel = self.bot.get_channel(
+            871434957308985374
+        )  # 851216632155865161
+        graph = await self.get_graph()
+        embed = discord.Embed()
+        embed.set_author(name=c.guild.name, icon_url=c.guild.icon.url)
+        embed.set_image(url="attachments://graph.png")
+        await c.send(embed=embed, file=graph)
+
     @tasks.loop(minutes=15)
     async def get_data(self):
         try:
@@ -58,6 +68,7 @@ class Graphs(commands.Cog):
         while datetime.now().minute not in (0, 15, 30, 45):
             await asyncio.sleep(60)
 
+    @commands.command(name="graph")
     async def make_graph(self):
         data = await graphs.find_one({"_id": datetime.now().strftime("%Y/%m/%d")})
         spain = []
@@ -80,18 +91,7 @@ class Graphs(commands.Cog):
             for a in m.attachments:
                 return a.url
 
-    @commands.command(name="graph")
-    async def send_graph(self):
-        c: discord.TextChannel = self.bot.get_channel(
-            871434957308985374
-        )  # 851216632155865161
-        graph = await self.get_graph()
-        embed = discord.Embed()
-        embed.set_author(name=c.guild.name, icon_url=c.guild.icon.url)
-        embed.set_image(url="attachments://graph.png")
-        await c.send(embed=embed, file=graph)
-
-    schedule.every().day.at("00:00").do(send_graph)
+    # schedule.every().day.at("00:00").do(send_graph)
 
 
 def setup(bot):
