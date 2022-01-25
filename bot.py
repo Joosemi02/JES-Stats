@@ -72,5 +72,6 @@ async def crashed(ctx: commands.Context, bool: bool):
 if __name__ == "__main__":
     bot.load_extension("cogs.commands")
     bot.load_extension("cogs.messages")
+    bot.load_extension("cogs.graphs")
 
     bot.run(token)
