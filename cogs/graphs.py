@@ -20,14 +20,14 @@ class Graphs(commands.Cog):
     
     @commands.command()
     async def test(self, ctx):
-        print(requests.get(api_1))
-        print(requests.get(api_2))
-        print(requests.get(api_3))
-        print(requests.get(api_4))
-        print(requests.get(api_5))
-        print(requests.get(api_6))
-        print(requests.get(api_7))
-        print(requests.get(api_8))
+        print(requests.get(api_1).json())
+        print(requests.get(api_2).json())
+        print(requests.get(api_3).json())
+        print(requests.get(api_4).json())
+        print(requests.get(api_5).json())
+        print(requests.get(api_6).json())
+        print(requests.get(api_7).json())
+        print(requests.get(api_8).json())
 
 def setup(bot):
     bot.add_cog(Graphs(bot))
