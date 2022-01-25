@@ -17,7 +17,7 @@ class Graphs(commands.Cog):
         print(f"{self.bot.user.name}: The graphs extension was loaded successfully.")
 
     @tasks.loop(seconds=15)
-    async def get_data():
+    async def get_data(self):
         res = requests.get(api_5).json()
         spain = sum(
             ("nation" in res[i] and res[i]["nation"].lower() == "spanish_republic")
