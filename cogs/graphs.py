@@ -80,7 +80,7 @@ class Graphs(commands.Cog):
             online.append(data[n]["online"])
         fig = plt.figure()
         fig, ax = plt.subplots()
-        ax.plot(data.keys(), spain)
+        ax.plot(list(data.keys()), spain)
         storage = self.bot.get_channel(935596324127129740)
         await storage.send(file=fig)
 
