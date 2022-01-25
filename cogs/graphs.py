@@ -69,7 +69,7 @@ class Graphs(commands.Cog):
             await asyncio.sleep(60)
 
     @commands.command(name="graph")
-    async def make_graph(self):
+    async def make_graph(self, ctx):
         data = await graphs.find_one({"_id": datetime.now().strftime("%Y/%m/%d")})
         spain = []
         online = []
