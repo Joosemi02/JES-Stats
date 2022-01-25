@@ -74,7 +74,8 @@ class Graphs(commands.Cog):
         spain = []
         online = []
         for n in data.keys():
-            print(data[n])
+            if n =="_id":
+                continue
             spain.append(data[n]["spain"])
             online.append(data[n]["online"])
         fig = plt.figure()
