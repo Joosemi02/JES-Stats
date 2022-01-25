@@ -31,8 +31,8 @@ class Graphs(commands.Cog):
         except JSONDecodeError:
             spain = 0
             online = 0
-        n = datetime.now(timezone.utc)
-        time = f"{n.hour}:{n.minute}"
+        n = datetime.now()
+        time = f"{n.hour+1}:{n.minute}"
         day = n.strftime("%Y/%m/%d")
         try:
             await graphs.insert_one(
@@ -46,7 +46,7 @@ class Graphs(commands.Cog):
                 },
             )
 
-    @get_data.before_loop()
+    @get_data.before_loop
     async def before_task(self):
         await self.bot.wait_until_ready()
         while datetime.now().minute not in (00, 15, 30, 45):
