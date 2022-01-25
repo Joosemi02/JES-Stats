@@ -32,7 +32,7 @@ class Graphs(commands.Cog):
             online = 0
         n = datetime.now()
         time = f"{n.hour}.{n.minute}"
-        day = date.today()
+        day = n.strftime("%Y/%m/%d")
         await graphs.insert_one(
             {"_id": day, f"{time}": {"spain": spain, "online": online}}
         )
