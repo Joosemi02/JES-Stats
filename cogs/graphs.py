@@ -33,8 +33,11 @@ class Graphs(commands.Cog):
         embed.set_image(url="attachments://graph.png")
         await c.send(embed=embed, file=graph)
 
-    @tasks.loop(minutes=15)
+    @tasks.loop(minutes=1)
     async def get_data(self):
+        n = datetime.now()
+        if n.minute not in (0, 15, 30, 45):
+            return
         try:
             res = requests.get(api_5).json()
             spain = sum(
@@ -45,7 +48,6 @@ class Graphs(commands.Cog):
         except JSONDecodeError:
             spain = 0
             online = 0
-        n = datetime.now()
         if n.minute == 0:
             n.minute = 00
         time = f"{n.hour+1}:{n.minute}"
@@ -62,12 +64,6 @@ class Graphs(commands.Cog):
                 },
             )
 
-    @get_data.before_loop
-    async def before_task(self):
-        await self.bot.wait_until_ready()
-        while datetime.now().minute not in (0, 15, 30, 45):
-            await asyncio.sleep(60)
-
     @commands.command(name="graph")
     async def make_graph(self, ctx):
         data = await graphs.find_one({"_id": datetime.now().strftime("%Y/%m/%d")})
@@ -80,7 +76,10 @@ class Graphs(commands.Cog):
             online.append(data[n]["online"])
         fig = plt.figure()
         fig, ax = plt.subplots()
-        ax.plot(list(data.keys()).remove("_id"), spain, "-b")
+        x = list(data.keys())
+        x.remove("_id")
+        ax.plot(x, spain, "-b")
+        ax.plot()
         storage = self.bot.get_channel(935596324127129740)
         await storage.send(file=fig)
 
@@ -91,7 +90,8 @@ class Graphs(commands.Cog):
             for a in m.attachments:
                 return a.url
 
-    # schedule.every().day.at("00:00").do(send_graph)
+    # schedule.every().day.at("23:59").do(make_graph)
+    # schedule.every().day.at("08:00").do(send_graph)
 
 
 def setup(bot):
