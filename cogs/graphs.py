@@ -1,4 +1,5 @@
 from datetime import date
+from json import JSONDecodeError
 import matplotlib
 import nextcord as discord
 import requests
@@ -17,14 +18,18 @@ class Graphs(commands.Cog):
         print(f"{self.bot.user.name}: The graphs extension was loaded successfully.")
         self.get_data.start()
 
-    @tasks.loop(seconds=15)
+    @tasks.loop(minutes=15)
     async def get_data(self):
-        res = requests.get(api_5).json()
-        spain = sum(
-            ("nation" in res[i] and res[i]["nation"].lower() == "spanish_republic")
-            for i in range(len(res))
-        )
-        online = sum("nation" in res[i] for i in range(len(res)))
+        try:
+            res = requests.get(api_5).json()
+            spain = sum(
+                ("nation" in res[i] and res[i]["nation"].lower() == "spanish_republic")
+                for i in range(len(res))
+            )
+            online = sum("nation" in res[i] for i in range(len(res)))
+        except JSONDecodeError:
+            spain = 0
+            online = 0
         time = date.timetuple()
         day = date.today()
         try:
