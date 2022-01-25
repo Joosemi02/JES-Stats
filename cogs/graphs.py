@@ -16,7 +16,7 @@ class Graphs(commands.Cog):
     async def on_ready(self):
         print(f"{self.bot.user.name}: The graphs extension was loaded successfully.")
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(seconds=15)
     async def get_data():
         res = requests.get(api_5).json()
         spain = sum(
@@ -27,10 +27,12 @@ class Graphs(commands.Cog):
         time = date.timetuple()
         day = date.today()
         try:
+            print(online, time)
             await graphs.insert_one(
                 {"_id": day, f"{time}": {"spain": spain, "online": online}}
             )
         except:
+            print(spain, day)
             await graphs.update_one(
                 {
                     "_id": day,
