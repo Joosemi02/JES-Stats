@@ -1,4 +1,5 @@
 import asyncio
+import io
 import matplotlib as mpl
 import matplotlib.image as mpi
 import matplotlib.pyplot as plt
@@ -81,6 +82,8 @@ class Graphs(commands.Cog):
         ax.plot(x, spain, "-b")
         ax.plot()
         storage = self.bot.get_channel(935596324127129740)
+        fig = io.BytesIO(fig)
+        fig = discord.File(fig, filename="uwuwuw.png")
         await storage.send(file=fig)
 
     async def get_graph(self):
