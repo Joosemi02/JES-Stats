@@ -25,13 +25,11 @@ class Graphs(commands.Cog):
         self.get_data.start()
 
     async def send_graph(self):
-        c: discord.TextChannel = self.bot.get_channel(
-            871434957308985374
-        )  # 851216632155865161
+        c: discord.TextChannel = self.bot.get_channel(851216632155865161)
         graph = await self.get_graph()
         embed = discord.Embed()
         embed.set_author(name=c.guild.name, icon_url=c.guild.icon.url)
-        embed.set_image(url="attachments://graph.png")
+        embed.set_image(url="attachment://graph.png")
         await c.send(embed=embed, file=graph)
 
     @tasks.loop(minutes=1)
@@ -82,16 +80,18 @@ class Graphs(commands.Cog):
         ax.plot(x, spain, "-b")
         ax.plot()
         storage = self.bot.get_channel(935596324127129740)
-        fig = io.BytesIO(fig)
-        fig = discord.File(fig, filename="uwuwuw.png")
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png")
+        buf.seek(0)
+        fig = discord.File(fp=buf, filename="graph.png")
         await storage.send(file=fig)
 
     async def get_graph(self):
         storage = self.bot.get_channel(935596324127129740)
-        for m in storage.history(1).flatten():
+        for m in await storage.history(limit=1).flatten():
             m: discord.Message
             for a in m.attachments:
-                return a.url
+                return await a.to_file()
 
     # schedule.every().day.at("23:59").do(make_graph)
     # schedule.every().day.at("08:00").do(send_graph)
