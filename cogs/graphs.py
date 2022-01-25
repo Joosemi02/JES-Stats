@@ -21,8 +21,7 @@ class Graphs(commands.Cog):
 
     @commands.command()
     async def test(self, ctx):
-        print(requests.get(api_4).json())
-        # print(requests.get(api_5).json())
+        print(requests.get(api_5).json())
         # print(requests.get(api_6).json())
         # print(requests.get(api_7).json())
 
