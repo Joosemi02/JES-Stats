@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime, timezone
 from json import JSONDecodeError
 import matplotlib
 import nextcord as discord
@@ -30,8 +30,8 @@ class Graphs(commands.Cog):
         except JSONDecodeError:
             spain = 0
             online = 0
-        n = datetime.now()
-        time = f"{n.hour}.{n.minute}"
+        n = datetime.now(timezone.utc)
+        time = f"{n.hour}:{n.minute}"
         day = n.strftime("%Y/%m/%d")
         await graphs.insert_one(
             {"_id": day, f"{time}": {"spain": spain, "online": online}}
