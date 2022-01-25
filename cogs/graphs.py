@@ -38,10 +38,5 @@ class Graphs(commands.Cog):
                 }
             )
 
-    @commands.command()
-    async def test(self, ctx):
-        print(requests.get(api_7).json())
-
-
 def setup(bot):
     bot.add_cog(Graphs(bot))

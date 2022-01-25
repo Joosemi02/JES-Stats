@@ -55,11 +55,6 @@ async def guilds(ctx: commands.Context):
 
 
 @bot.command()
-async def testo(ctx):
-    await ctx.send(await bot.application_info())
-
-
-@bot.command()
 @commands.is_owner()
 async def crashed(ctx: commands.Context, bool: bool):
     if bool:
