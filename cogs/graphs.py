@@ -1,8 +1,9 @@
-from datetime import datetime, timezone
-from json import JSONDecodeError
+import asyncio
 import matplotlib
 import nextcord as discord
 import requests
+from datetime import datetime, timezone
+from json import JSONDecodeError
 from nextcord.ext import commands, tasks
 from config import db, api_5
 
@@ -44,6 +45,12 @@ class Graphs(commands.Cog):
                     "$set": {f"{time}": {"spain": spain, "online": online}},
                 },
             )
+
+    @get_data.before_loop()
+    async def before_task(self):
+        await self.bot.wait_until_ready()
+        while datetime.now().minute not in (00, 15, 30, 45):
+            await asyncio.sleep(60)
 
 
 def setup(bot):
