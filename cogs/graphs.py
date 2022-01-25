@@ -48,7 +48,7 @@ class Graphs(commands.Cog):
         n = datetime.now()
         if n.minute == 0:
             n.minute = 00
-        time = f"{n.hour+2}:{n.minute}"
+        time = f"{n.hour+1}:{n.minute}"
         day = n.strftime("%Y/%m/%d")
         try:
             await graphs.insert_one(
@@ -74,7 +74,7 @@ class Graphs(commands.Cog):
         spain = []
         online = []
         for n in data.keys():
-            if n =="_id":
+            if n == "_id":
                 continue
             spain.append(data[n]["spain"])
             online.append(data[n]["online"])
