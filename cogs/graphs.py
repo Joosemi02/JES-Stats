@@ -15,6 +15,7 @@ class Graphs(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.bot.user.name}: The graphs extension was loaded successfully.")
+        self.get_data.start()
 
     @tasks.loop(seconds=15)
     async def get_data(self):
@@ -39,7 +40,6 @@ class Graphs(commands.Cog):
                     "$set": {f"{time}": {"spain": spain, "online": online}},
                 }
             )
-    get_data.start()
 
 def setup(bot):
     bot.add_cog(Graphs(bot))
