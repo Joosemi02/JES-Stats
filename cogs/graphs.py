@@ -47,7 +47,7 @@ class Graphs(commands.Cog):
         except JSONDecodeError:
             spain = 0
             online = 0
-        min = 00 if n.minute == 0 else n.minute
+        min = "00" if n.minute == 0 else n.minute
         time = f"{n.hour+1}:{min}"
         day = n.strftime("%Y/%m/%d")
         try:
@@ -92,8 +92,8 @@ class Graphs(commands.Cog):
             for a in m.attachments:
                 return await a.to_file()
 
-    # schedule.every().day.at("23:59").do(make_graph)
-    # schedule.every().day.at("08:00").do(send_graph)
+    schedule.every().day.at("23:59").do(make_graph)
+    schedule.every().day.at("08:00").do(send_graph)
 
 
 def setup(bot):
