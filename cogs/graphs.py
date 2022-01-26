@@ -47,9 +47,8 @@ class Graphs(commands.Cog):
         except JSONDecodeError:
             spain = 0
             online = 0
-        if n.minute == 0:
-            n.minute = 00
-        time = f"{n.hour+1}:{n.minute}"
+        min = 00 if n.minute == 0 else n.minute
+        time = f"{n.hour+1}:{min}"
         day = n.strftime("%Y/%m/%d")
         try:
             await graphs.insert_one(
