@@ -1,15 +1,15 @@
-import asyncio
 import io
-import matplotlib as mpl
-import matplotlib.image as mpi
-import matplotlib.pyplot as plt
-import nextcord as discord
-import numpy as np
 import requests
-import schedule
 from datetime import datetime
 from json import JSONDecodeError
+
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
+import nextcord as discord
+import numpy as np
+import schedule
 from nextcord.ext import commands, tasks
+
 from config import db, api_5
 
 graphs = db["graphs"]
@@ -62,9 +62,9 @@ class Graphs(commands.Cog):
                 },
             )
 
-    @commands.command(name="graph")
-    async def make_graph(self, ctx):
-        data = await graphs.find_one({"_id": datetime.now().strftime("%Y/%m/%d")})
+    async def make_graph(self):
+        id_ = datetime.now().strftime("%d/%m/%Y")
+        data = await graphs.find_one({"_id": id_})
         spain = []
         online = []
         for n in data.keys():
@@ -72,12 +72,49 @@ class Graphs(commands.Cog):
                 continue
             spain.append(data[n]["spain"])
             online.append(data[n]["online"])
+
         fig = plt.figure()
         fig, ax = plt.subplots()
         x = list(data.keys())
         x.remove("_id")
-        ax.plot(x, spain, "-b")
-        ax.plot()
+        (line_spain,) = ax.plot(x, spain, "-r")
+        (line_online,) = ax.plot(x, online, "-b")
+        x_ticks = np.arange(0, 96, 4)
+        labels = [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "0",
+        ]
+        ax.set_xlabel("Time (UTC+1)")
+        ax.set_ylabel("Online players")
+        ax.legend(
+            [line_online, line_spain],
+            ["Total online players", "Online Spanish citizens"],
+        )
+        ax.set_xticks(x_ticks)
+        ax.set_xticklabels(labels)
+        ax.set_title(id_)
         storage = self.bot.get_channel(935596324127129740)
         buf = io.BytesIO()
         fig.savefig(buf, format="png")
